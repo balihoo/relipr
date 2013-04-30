@@ -24,7 +24,7 @@ The following shell commands should get you up and running on a clean Ubuntu ser
 4. Move the www directory to the side and link it to relipr
 
 		sudo mv /var/www/ /var/wwwbak
-		sudo ln -s $(pwd)/web/ /var/www
+		sudo ln -s $(pwd)/relipr/web/ /var/www
 
 5. Update the apache configuration
 
