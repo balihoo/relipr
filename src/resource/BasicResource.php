@@ -13,7 +13,7 @@ use Tonic\Resource,
 /**
  * Resources that inherit from this class will prompt for basic authentication and
  *  will validate some of the standard path params
- * Any user name will work. The password is md5("{$user}salt")
+ * User is 'test' password is 'letmein'
  * ** NOT REAL SECURITY - JUST A DEMONSTRATION **
  */
 abstract class BasicResource extends Resource {
@@ -33,15 +33,8 @@ abstract class BasicResource extends Resource {
 	protected function runBasicAuth($request, $methodName)
 	{
 		// Make sure that the browser is sending basic auth
-		if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']))
-			throw new UnauthorizedException;
-
-		// Calculate the password
-		$user = $_SERVER['PHP_AUTH_USER'];
-		$password = md5("{$user}s@lt");
-
-		// Make sure the browser's password matches
-		if ($_SERVER['PHP_AUTH_PW'] != $password)
+		if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
+			$_SERVER['PHP_AUTH_USER'] != 'test' || $_SERVER['PHP_AUTH_PW'] != 'letmein')
 			throw new UnauthorizedException;
 	}
 
