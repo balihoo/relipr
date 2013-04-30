@@ -4,6 +4,6 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule .* dispatch.php [L,QSA]
 </IfModule>
-RewriteBase /relipr
+RewriteBase /
 Header set Access-Control-Allow-Origin "*"
 
