@@ -28,7 +28,7 @@ The following shell commands should get you up and running on a clean Ubuntu ser
 
 5. Update the apache configuration
 
-		cat <<APACHECONTROL
+		cat <<APACHECONFIG > /tmp/apacheconfig
 		<VirtualHost *:80>
 			ServerAdmin webmaster@localhost
 
@@ -53,7 +53,9 @@ The following shell commands should get you up and running on a clean Ubuntu ser
 			CustomLog ${APACHE_LOG_DIR}/access.log combined
 
 		</VirtualHost>
-		APACHECONTROL
+		APACHECONFIG
+		sudo cp /etc/apache2/sites-available/default /etc/apache2/sites-available/default.bak
+		sudo mv /tmp/apacheconfig /etc/apache2/sites-available/default
 
 6. Turn on mod rewrite and headers
 
