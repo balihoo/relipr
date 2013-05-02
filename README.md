@@ -67,7 +67,7 @@ The following shell commands should get you up and running on a clean Ubuntu ser
 		cd relipr/
 		./configure.sh
 
-9. Browse to the root directory
+9. Open your web browser and navigate to your server's root directory
 10. Click **Refresh source data file** -> wait for it to load -> hit the back button
 11. Click **Refresh Database** -> wait for it -> hit back button
 12. Refresh the page, make sure all the checklist items are blue
