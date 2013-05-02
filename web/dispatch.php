@@ -18,6 +18,7 @@ if(isset($_SERVR)) {
 $basePath = realpath(dirname(__FILE__) . "/../src/");
 set_include_path(
 	get_include_path() . PATH_SEPARATOR . 
+	$basePath . "/lib" . PATH_SEPARATOR .
 	$basePath . "/lib/Tonic"
 );
 

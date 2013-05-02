@@ -89,33 +89,10 @@ abstract class BasicResource extends Resource {
 		return parent::__get($name);
 	}
 
-	/* This is _NOT_ something you would do in production =)
-		Create a view class with a render method that invokes the given view script
-		From a resource class call it like this: $this->getView('index')->render();
-		Or, make data from the resource available to the view like this:
-		 // In the resource method, send the view a string
-		 $view = $this->getView('index');
-		 $view->data = "Some data for the view.";
-		 $view->render();
-
-		 // In the view script, pull out the data
-		 echo "<b>" . $this->data . "</b>";
-	*/
+	// Render a page
 	protected function getView($page) {
-		$vpath = realpath("../src/view/$page.php");
-		$cname = "View_$page" . uniqid();
-		$classdef = <<<CDEF
-			class $cname {
-				public function render() {
-					ob_start();
-					require_once "$vpath";
-					ob_end_flush();
-					exit();
-				}
-			}
-CDEF;
-		eval($classdef);
-		return new $cname;
+		require_once('View.php');
+		return new View($page);
 	}
 
 	/**
