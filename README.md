@@ -44,13 +44,9 @@ The following shell commands should get you up and running on a clean Ubuntu ser
 				allow from all
 			</Directory>
 
-			ErrorLog ${APACHE_LOG_DIR}/error.log
-
-			# Possible values include: debug, info, notice, warn, error, crit,
-			# alert, emerg.
+			ErrorLog \${APACHE_LOG_DIR}/error.log
 			LogLevel warn
-
-			CustomLog ${APACHE_LOG_DIR}/access.log combined
+			CustomLog \${APACHE_LOG_DIR}/access.log combined
 
 		</VirtualHost>
 		APACHECONFIG
