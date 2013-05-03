@@ -14,28 +14,31 @@ Criteria Collection
 -------------------
 The API provides a mechanism that allows the List Provider to publish a directory of pre-defined campaign criteria types that it supports. The listings are made available on a per brand/medium basis. For example:
 
-[/medium/directmail/brand/acme/criteria](/medium/directmail/brand/acme/criteria):
-<iframe src="/medium/directmail/brand/acme/criteria"></iframe>
+<a href="medium/directmail/brand/acme/criteria" target="if1">/medium/directmail/brand/acme/criteria</a>
+(Click link to see sample results)
+<a href="medium/directmail/brand/oscorp/criteria" target="if1">/medium/directmail/brand/oscorp/criteria</a>
+<iframe name="if1" src="about:blank"></iframe>
 Note that the outermost container is an array. The criteria resource returns a list of applicable criteria specifications.
-
-####Other examples:
- - [/medium/directmail/brand/oscorp/criteria](/medium/directmail/brand/oscorp/criteria 'view the oscorp criteria collection')
 
 * * *
 
 Single Criteria
 ---------------
 To retrieve an individual criteria specification, append the `critieriaid` to the resource:
-[/medium/directmail/brand/acme/criteria/12456](/medium/directmail/brand/acme/criteria/12456):
-<iframe src="/medium/directmail/brand/acme/criteria/12456"></iframe>
+
+<a href="medium/directmail/brand/acme/criteria/12345" target="if2">/medium/directmail/brand/acme/criteria/12345</a>
+<a href="medium/directmail/brand/acme/criteria/12456" target="if2">/medium/directmail/brand/acme/criteria/12456</a>
+<a href="medium/directmail/brand/oscorp/criteria/osc101" target="if2">/medium/directmail/brand/oscorp/criteria/osc101</a>
+<iframe name="if2" src="about:blank"></iframe>
 
 * * *
 
 Affiliate Specific Criteria
 ---------------------------
-In some cases the criteria and options will differ based on wether the campaign is executed across the entire national brand or for a specific affiliate. In the following example, the criteria is specifically for affiliate `45`. Notice how the age range and household income options differ in this example from the previous example:
-[/medium/directmail/brand/acme/affiliate/45/criteria/12456](/medium/directmail/brand/acme/affiliate/45/criteria/12456):
-<iframe src="/medium/directmail/brand/acme/affiliate/45/criteria/12456"></iframe>
+In some cases the criteria and options will differ based on wether the campaign is executed across the entire national brand or for a specific affiliate. In the following example, the criteria is specifically for a single affiliate. Notice how the options differ in these examples from the previous examples:
+<a href="medium/directmail/brand/acme/affiliate/45/criteria/12456" target="if3">/medium/directmail/brand/acme/affiliate/45/criteria/12456</a>
+<a href="medium/directmail/brand/acme/affiliate/32/criteria/12456" target="if3">/medium/directmail/brand/acme/affiliate/32/criteria/12456</a>
+<iframe name="if3" src="about:blank"></iframe>
 
 * * *
 
@@ -75,5 +78,4 @@ Download a Prepared List
 
 Updating Recipient Specific Results
 -----------------------------------
-
 

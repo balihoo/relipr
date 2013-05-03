@@ -34,11 +34,19 @@ class View
 
 	// Convert the markdown file into html
 	private function renderMarkdown() {
-		require_once('Markdown.php');
-		$md = new Michelf\Markdown();
-		echo '<html><head><link href="markdown.css" media="all" rel="stylesheet" type="text/css"/></head><body>';
-		echo $md->transform(file_get_contents($this->viewPath));
-		echo '</body></html>';
+		// Store a cache of the rendered file to keep things snappy
+		$cachePath = sys_get_temp_dir() . '/markdowncache_' . md5($this->viewPath) . '.html';
+		if(!file_exists($cachePath) || filemtime($cachePath) < filemtime($this->viewPath)) {
+			require_once('Markdown.php');
+			$md = new Michelf\Markdown();
+			$src = '<html><head><link href="markdown.css" media="all" rel="stylesheet" type="text/css"/></head><body>';
+			$src .= $md->transform(file_get_contents($this->viewPath));
+			$src .= '</body></html>';
+			file_put_contents($cachePath, $src, LOCK_EX);
+			echo $src;
+		} else {
+			readfile($cachePath);
+		}
 		exit;
 	}
 
