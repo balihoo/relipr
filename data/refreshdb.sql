@@ -1,20 +1,9 @@
 .bail ON
 .separator ","
+PRAGMA foreign_keys = ON;
 
 select 'Refreshing database...';
 
--- create the list table
-create table list(
-	listid integer primary key autoincrement not null,
-	selections varchar(2000) not null,
-	requestedCount integer not null,
-	count integer null,
-	isEstimate integer null,
-	cost float null,
-	status varchar not null
-);
-select 'Created list table';
-	
 -- create the recipient table
 create table recipient(
 	recipientid integer primary key not null,
@@ -65,6 +54,39 @@ create table brand(
 );
 insert into brand (brandkey) select distinct brandkey from recipient;
 select 'Loaded ' || count(*) || ' brands' from brand;
+
+-- create the list status table
+create table status(
+	status varchar(10) primary key not null
+);
+
+insert into status(status)
+select 'New' status
+union select 'Purchased'
+union select 'Available'
+union select 'Canceled'
+union select 'Expired'
+;
+
+select 'Created status table';
+
+-- create the list table
+create table list(
+	listid integer primary key autoincrement not null,
+	brandkey varchar(10) not null,
+	criteriaid varchar(20) not null,
+	medium varchar(20) not null,
+	selections varchar(2000) not null,
+	requestedCount integer not null,
+	count integer null,
+	isEstimate integer null,
+	cost float null,
+	status varchar(10) not null,
+	callback varchar(255) null,
+	foreign key(brandkey) references brand(brandkey),
+	foreign key(status) references status(status)
+);
+select 'Created list table';
 
 select 'Refresh complete';
 

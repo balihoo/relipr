@@ -11,18 +11,22 @@ class DB {
 	private $db;
 	private $_brands;
 
+	// Singleton constructor
 	private function __construct($fileName = null) {
 		if($fileName === null)
 			$fileName = "../data/sample.db";
 		$this->db = new SQLite3($fileName);
+		$this->db->exec('PRAGMA foreign_keys = ON;');
 	}
 
+	// Singleton method
 	public static function getInstance() {
 		if(self::$instance === null)
 			self::$instance = new DB();
 		return self::$instance;
 	}
 
+	// Count the rows in a table - handy method used to check that things are set up
 	public function getTableLength ($tableName) {
 		$result = $this->db->query("select count(*) as total from $tableName;");
 		if($result) {
@@ -33,6 +37,7 @@ class DB {
 		}
 	}
 
+	// Return a list of brands
 	public function getBrands() {
 		if($this->_brands == null) {
 			$this->_brands = array();
@@ -44,6 +49,7 @@ class DB {
 		return $this->_brands;
 	}
 
+	// Check that an affiliate exists and has recipients
 	public function getAffiliate($brandkey, $affiliateid) {
 		$sql = "select count(*) total from recipient where brandkey='$brandkey' and affiliateid=$affiliateid";
 		$result = $this->db->query($sql);
@@ -54,11 +60,78 @@ class DB {
 		return null;
 	}
 
+	// Get a list of mediums
 	public function getMediums() {
 		return array(
 			'email' => 'Email Marketing',
 			'directmail' => 'Direct Mail Marketing',
 		);
+	}
+
+	// Get all of the criteria for a single brand/medium
+	// affiliateid is optional
+	public function getBrandCriteria($brandkey, $medium, $affiliateid = null) {
+		$compKey = "$brandkey-$medium";
+		switch($compKey)
+		{
+			case 'acme-directmail':
+				return array(
+					$this->newMovers('12345', array(30, 60)),
+					$this->demographics('12456', $brandkey, $affiliateid),
+				);
+			case 'oscorp-directmail':
+				return array(
+					$this->carCare('osc101', 'oscorp', $affiliateid),
+				);
+		}
+		return null;
+	}
+
+	// Get a collection of criteria, or a single criteria if the id is specified
+	public function getCriteria($medium, $brandkey, $criteriaid = null, $affiliateid = null) {
+		$brandCriteria = $this->getBrandCriteria($brandkey, $medium, $affiliateid);
+
+		// Throw a 404 if we didn't find any for this brand/medium
+		if(!$brandCriteria)
+			throw new NotFoundException("Criteria not found for brand '$brandkey', medium '$medium'");
+
+		// If a specific critieriaid was supplied then try to return just that one
+		if($criteriaid !== null) {
+			foreach($brandCriteria as $criteria) {
+				// If we found the criteria then return it
+				if(isset($criteria['criteriaid']) && $criteria['criteriaid'] == $criteriaid)
+					return $criteria;
+			}
+			throw new NotFoundException(
+				"Criteria not found. medium:'$medium', brand:'$brandkey', criteriaid:'$criteriaid'");
+		}
+
+		return $brandCriteria;
+	}
+
+	// Create a new list object
+	public function createList(Selection $selection, $medium, $brandkey, $criteriaid, $limit) {
+		$count = $this->db->querySingle($selection->getCountQuery($medium, $brandkey, $criteriaid));
+
+		$list = array(
+			'listid' => null,
+			'count' => $count,
+			'brandkey' => $brandkey,
+			'criteriaid' => $criteriaid,
+			'medium' => $medium,
+			'requestedCount' => $limit,
+			'isEstimate' => false,
+			'cost' => ($count > $limit ? $limit : $count) * .05,
+			'status' => 'New',
+			'callback' => null,
+			'selections' => $selection->data,
+		);
+
+		$this->db->exec("insert into list (brandkey, criteriaid, medium, selections, requestedCount,
+			count, status) values ('$brandkey', '$criteriaid', '$medium', '" .
+				$this->db->escapeString($selection->jsonText) . "', $limit, $count, 'New');");
+		$list['listid'] = $this->db->lastInsertRowID();
+		return $list;
 	}
 
 	public function refreshDatabase() {
@@ -99,46 +172,7 @@ class DB {
 			return preg_replace('/\n/', '<br/>', $out);
 	}
 
-	// Get a collection of criteria, or a single criteria if the id is specified
-	public function getCriteria($medium, $brandkey, $criteriaid = null, $affiliateid = null) {
-		$brandCriteria = $this->getBrandCriteria($brandkey, $medium, $affiliateid);
-
-		// Throw a 404 if we didn't find any for this brand/medium
-		if(!$brandCriteria)
-			throw new NotFoundException("Criteria not found for brand '$brandkey', medium '$medium'");
-
-		// If a specific critieriaid was supplied then try to return just that one
-		if($criteriaid !== null) {
-			foreach($brandCriteria as $criteria) {
-				// If we found the criteria then return it
-				if(isset($criteria['criteriaid']) && $criteria['criteriaid'] == $criteriaid)
-					return $criteria;
-			}
-			throw new NotFoundException(
-				"Criteria not found. medium:'$medium', brand:'$brandkey', criteriaid:'$criteriaid'");
-		}
-
-		return $brandCriteria;
-	}
-
-	public function getBrandCriteria($brandkey, $medium, $affiliateid) {
-		$compKey = "$brandkey-$medium";
-		switch($compKey)
-		{
-			case 'acme-directmail':
-				return array(
-					$this->newMovers('12345', array(30, 60)),
-					$this->demographics('12456'),
-				);
-			case 'oscorp-directmail':
-				return array(
-					$this->carCare('osc101', 'oscorp', $affiliateid),
-				);
-		}
-		return null;
-	}
-
-	private function demographics($id) {
+	private function demographics($id, $brandkey, $affiliateid = null) {
 		$criteria = array(
 			'criteriaid' => "$id",
 			'title' => 'Select Your Target Audience',
@@ -154,41 +188,81 @@ class DB {
 							'title' => 'Gender',
 							'options' => array('Male', 'Female'),
 						),
-						array(
-							'criterionid' => 'agerange',
-							'type' => 'selectmultiple',
-							'title' => 'Age Ranges',
-							'options' => array(
-								array('title' => '18 or younger', 'value' => '1'),
-								array('title' => '19 to 25', 'value' => '2'),
-								array('title' => '26 to 35', 'value' => '3'),
-								array('title' => '36 to 35', 'value' => '4'),
-								array('title' => '46 to 35', 'value' => '5'),
-								array('title' => '56 to 35', 'value' => '6'),
-								array('title' => '66 to 35', 'value' => '7'),
-								array('title' => '76 and older', 'value' => '8'),
-							),
-						),
+						$this->getAgeRange($brandkey, $affiliateid),
 					), 
 				),
-				array(
-					'criterionid' => 'income',
-					'type' => 'selectmultiple',
-					'title' => 'Household Income',
-					'options' => array(
-						array('title' => 'Less than 20,000', 'value' => '1'),
-						array('title' => '20,000 to 40,000', 'value' => '2'),
-						array('title' => '40,000 to 60,000', 'value' => '3'),
-						array('title' => '60,000 to 80,000', 'value' => '4'),
-						array('title' => '80,000 to 100,000', 'value' => '5'),
-						array('title' => '100,000 to 150,000', 'value' => '6'),
-						array('title' => 'Greater than 150,000', 'value' => '7'),
-					)
-				),
+				$this->getIncomeRange($brandkey, $affiliateid),
 			)
 		);
 
 		return $criteria;
+	}
+
+	private function getAgeRange($brandkey, $affiliateid = null) {
+		$criterion = array(
+			'criterionid' => 'agerange',
+			'type' => 'selectmultiple',
+			'title' => 'Age Ranges',
+		);
+
+		$sql = <<<SQL
+select ar.range || ' (' || count(r.recipientid) || ' customers)' title, ar.lo value
+from ( select '18 - 30' range, 18 lo, 30 hi
+	union select '31 - 45', 31, 45
+	union select '46 - 65', 46, 65
+	union select '65 and older', 65, 120
+) as ar
+left join recipient r on r.age >= ar.lo and r.age <= ar.hi and r.brandkey = '$brandkey'
+SQL;
+		if($affiliateid)
+			$sql .= " and r.affiliateid = $affiliateid\n";
+		$sql .= "group by ar.range order by ar.lo;";
+		$result = $this->db->query($sql);
+
+		$options = array();
+		while($data= $result->fetchArray()) {
+			$options[] = array(
+				'title' => $data['title'],
+				'value' => $data['value'],
+			);
+		}
+
+		$criterion['options'] = $options;
+		return $criterion;
+	}
+
+	private function getIncomeRange($brandkey, $affiliateid = null) {
+		$criterion = array(
+			'criterionid' => 'income',
+			'type' => 'selectmultiple',
+			'title' => 'Household Income',
+		);
+
+		$sql = <<<SQL
+select ir.range || ' (' || count(r.recipientid) || ' customers)'  title, ir.lo value
+from (select '$0 - $25K' range, 0 lo, 25000 hi
+ union select '$25K - $50K', 25000, 50000
+ union select '$50K - $100K', 50000, 100000
+ union select '$100K - $250K', 100000, 250000
+ union select '$250K and above', 250000, 250000000
+) ir
+left join recipient r on r.income >= ir.lo and r.income < ir.hi and r.brandkey = '$brandkey'
+SQL;
+		if($affiliateid)
+			$sql .= " and r.affiliateid = $affiliateid\n";
+		$sql .= "group by ir.range order by ir.lo;";
+		$result = $this->db->query($sql);
+
+		$options = array();
+		while($data= $result->fetchArray()) {
+			$options[] = array(
+				'title' => $data['title'],
+				'value' => $data['value'],
+			);
+		}
+
+		$criterion['options'] = $options;
+		return $criterion;
 	}
 
 	private function newMovers($id, $days) {

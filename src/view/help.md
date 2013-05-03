@@ -10,12 +10,12 @@ Definitions
 
 * * *
 
-Criteria Specification Collection
----------------------------------
+Criteria Collection
+-------------------
 The API provides a mechanism that allows the List Provider to publish a directory of pre-defined campaign criteria types that it supports. The listings are made available on a per brand/medium basis. For example:
 
 [/medium/directmail/brand/acme/criteria](/medium/directmail/brand/acme/criteria):
-<iframe src="/medium/directmail/brand/acme/criteria" width="100%"></iframe>
+<iframe src="/medium/directmail/brand/acme/criteria"></iframe>
 Note that the outermost container is an array. The criteria resource returns a list of applicable criteria specifications.
 
 ####Other examples:
@@ -23,14 +23,40 @@ Note that the outermost container is an array. The criteria resource returns a l
 
 * * *
 
-Individual Criteria Specification
----------------------------------
-To retrieve an individual criteria, append the unique `critieriaid` to the criteria resource:
+Single Criteria
+---------------
+To retrieve an individual criteria specification, append the `critieriaid` to the resource:
 [/medium/directmail/brand/acme/criteria/12456](/medium/directmail/brand/acme/criteria/12456):
-<iframe src="/medium/directmail/brand/acme/criteria/12456" width="100%"></iframe>
+<iframe src="/medium/directmail/brand/acme/criteria/12456"></iframe>
+
+* * *
+
+Affiliate Specific Criteria
+---------------------------
+In some cases the criteria and options will differ based on wether the campaign is executed across the entire national brand or for a specific affiliate. In the following example, the criteria is specifically for affiliate `45`. Notice how the age range and household income options differ in this example from the previous example:
+[/medium/directmail/brand/acme/affiliate/45/criteria/12456](/medium/directmail/brand/acme/affiliate/45/criteria/12456):
+<iframe src="/medium/directmail/brand/acme/affiliate/45/criteria/12456"></iframe>
+
+* * *
 
 Create a List Request
 -----------------------
+
+<form action="/medium/directmail/brand/oscorp/criteria/osc101/list" method="post" target="iframe1">
+	<strong>POST to :</strong> medium/directmail/brand/oscorp/criteria/osc101/list<br/>
+	<br/>
+
+	selections:<br/>
+	<textarea name="selections" cols="40" rows="9">{
+ "affiliates": [75],
+ "visitedrange": ["2012-03-01", null],
+ "vehicle": ["Ford", "Chevrolet", "Toyota"],
+ "mileage": [null, 150000],
+ "custloyalty": ["Oil Change", "Oil Change+"]
+}</textarea><br/>
+	<input type="submit" value="POST"/>
+</form>
+<iframe name="iframe1" src="about:blank"></iframe>
 
 Calculate List Cost & Count
 -----------------------------
