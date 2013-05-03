@@ -1,6 +1,7 @@
 <?php
 
 require_once('BasicResource.php');
+require_once('CriteriaBuilder.php');
 
 use Tonic\Resource,
     Tonic\Response,
@@ -20,7 +21,7 @@ class CriteriaCollection extends BasicResource{
 	 * @json
 	 */
 	public function get($medium, $brandkey){
-		$criteria = $this->db->getCriteria($medium, $brandkey);
+		$criteria = CriteriaBuilder::getCriteriaCollection($medium, $brandkey);
 		return new Response(Response::OK, $criteria);
 	}
 

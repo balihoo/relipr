@@ -1,6 +1,7 @@
 <?php
 
 require_once("../src/lib/DB.php");
+require_once("CriteriaBuilder.php");
 
 use Tonic\Resource,
     Tonic\Response,

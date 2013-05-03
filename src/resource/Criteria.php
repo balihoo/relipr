@@ -23,7 +23,7 @@ class Criteria extends BasicResource{
 	 */
 	public function get(){
 		$affiliateid = isset($this->affiliateid) ? $this->affiliateid : null;
-		$criteria = $this->db->getCriteria($this->medium, $this->brandkey, $this->criteriaid, $affiliateid);
+		$criteria = CriteriaBuilder::getCriteria($this->medium, $this->brandkey, $this->criteriaid, $affiliateid);
 		return new Response(Response::OK, $criteria);
 	}
 

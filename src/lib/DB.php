@@ -68,45 +68,13 @@ class DB {
 		);
 	}
 
-	// Get all of the criteria for a single brand/medium
-	// affiliateid is optional
-	public function getBrandCriteria($brandkey, $medium, $affiliateid = null) {
-		$compKey = "$brandkey-$medium";
-		switch($compKey)
-		{
-			case 'acme-directmail':
-				return array(
-					$this->newMovers('12345', array(30, 60)),
-					$this->demographics('12456', $brandkey, $affiliateid),
-				);
-			case 'oscorp-directmail':
-				return array(
-					$this->carCare('osc101', 'oscorp', $affiliateid),
-				);
-		}
-		return null;
-	}
-
-	// Get a collection of criteria, or a single criteria if the id is specified
-	public function getCriteria($medium, $brandkey, $criteriaid = null, $affiliateid = null) {
-		$brandCriteria = $this->getBrandCriteria($brandkey, $medium, $affiliateid);
-
-		// Throw a 404 if we didn't find any for this brand/medium
-		if(!$brandCriteria)
-			throw new NotFoundException("Criteria not found for brand '$brandkey', medium '$medium'");
-
-		// If a specific critieriaid was supplied then try to return just that one
-		if($criteriaid !== null) {
-			foreach($brandCriteria as $criteria) {
-				// If we found the criteria then return it
-				if(isset($criteria['criteriaid']) && $criteria['criteriaid'] == $criteriaid)
-					return $criteria;
-			}
-			throw new NotFoundException(
-				"Criteria not found. medium:'$medium', brand:'$brandkey', criteriaid:'$criteriaid'");
-		}
-
-		return $brandCriteria;
+	// Get a list of all vehicl makes and models
+	public function getVehicles($brandkey, $affiliateid = null) {
+		$sql = "select distinct make, model from recipient where brandkey = '$brandkey'";
+		if($affiliateid)
+			$sql .= " and affiliateid = $affiliateid";
+		$sql .= " order by make, model";
+		return $this->db->query($sql);
 	}
 
 	// Create a new list object
@@ -134,6 +102,7 @@ class DB {
 		return $list;
 	}
 
+	// Refresh the database back to the baseline
 	public function refreshDatabase() {
 		// Make sure that we can run sqlite3 from the command line
 		$sqlite3 = exec('which sqlite3', $output, $return);
@@ -172,51 +141,12 @@ class DB {
 			return preg_replace('/\n/', '<br/>', $out);
 	}
 
-	private function demographics($id, $brandkey, $affiliateid = null) {
-		$criteria = array(
-			'criteriaid' => "$id",
-			'title' => 'Select Your Target Audience',
-			'description' => 'Use the consumer demographic selections to narrow your audience',
-			'criteria' => array(
-					array(
-						'type' => 'section',
-						'title' => 'Group of Items',
-						'criteria' => array(
-						array(
-							'criterionid' => 'gender',
-							'type' => 'selectmultiple',
-							'title' => 'Gender',
-							'options' => array('Male', 'Female'),
-						),
-						$this->getAgeRange($brandkey, $affiliateid),
-					), 
-				),
-				$this->getIncomeRange($brandkey, $affiliateid),
-			)
-		);
-
-		return $criteria;
-	}
-
-	private function getAgeRange($brandkey, $affiliateid = null) {
-		$criterion = array(
-			'criterionid' => 'agerange',
-			'type' => 'selectmultiple',
-			'title' => 'Age Ranges',
-		);
-
-		$sql = <<<SQL
-select ar.range || ' (' || count(r.recipientid) || ' customers)' title, ar.lo value
-from ( select '18 - 30' range, 18 lo, 30 hi
-	union select '31 - 45', 31, 45
-	union select '46 - 65', 46, 65
-	union select '65 and older', 65, 120
-) as ar
-left join recipient r on r.age >= ar.lo and r.age <= ar.hi and r.brandkey = '$brandkey'
-SQL;
+	// Use the recipient database to build a list of criteria selection options
+	public function getOptionsFromSQL($brandkey, $affiliateid, $sql, $on, $group, $order) {
+		$sql .= " left join recipient r on $on and r.brandkey = '$brandkey'";
 		if($affiliateid)
-			$sql .= " and r.affiliateid = $affiliateid\n";
-		$sql .= "group by ar.range order by ar.lo;";
+			$sql .= " and r.affiliateid = $affiliateid ";
+		$sql .= "\ngroup by $group\norder by $order;";
 		$result = $this->db->query($sql);
 
 		$options = array();
@@ -226,181 +156,7 @@ SQL;
 				'value' => $data['value'],
 			);
 		}
-
-		$criterion['options'] = $options;
-		return $criterion;
-	}
-
-	private function getIncomeRange($brandkey, $affiliateid = null) {
-		$criterion = array(
-			'criterionid' => 'income',
-			'type' => 'selectmultiple',
-			'title' => 'Household Income',
-		);
-
-		$sql = <<<SQL
-select ir.range || ' (' || count(r.recipientid) || ' customers)'  title, ir.lo value
-from (select '$0 - $25K' range, 0 lo, 25000 hi
- union select '$25K - $50K', 25000, 50000
- union select '$50K - $100K', 50000, 100000
- union select '$100K - $250K', 100000, 250000
- union select '$250K and above', 250000, 250000000
-) ir
-left join recipient r on r.income >= ir.lo and r.income < ir.hi and r.brandkey = '$brandkey'
-SQL;
-		if($affiliateid)
-			$sql .= " and r.affiliateid = $affiliateid\n";
-		$sql .= "group by ir.range order by ir.lo;";
-		$result = $this->db->query($sql);
-
-		$options = array();
-		while($data= $result->fetchArray()) {
-			$options[] = array(
-				'title' => $data['title'],
-				'value' => $data['value'],
-			);
-		}
-
-		$criterion['options'] = $options;
-		return $criterion;
-	}
-
-	private function newMovers($id, $days) {
-		$criteria = array(
-			'criteriaid' => "$id",
-			'title' => 'New Movers',
-			'description' => 'Select households that have new occupants',
-			'criteria' => array(
-				array(
-					'criterionid' => 'reslength',
-					'type' => 'selectSingle',
-					'title' => 'Length of Residence',
-					'description' => 'Choose the maximum length of occupancy',
-					'options' => array(),
-					'default' => 30,
-					'required' => true,
-					'editable' => true,
-					'hidden' => false,
-				),
-			)
-		);
-		foreach($days as $day)
-			$criteria['criteria'][0]['options'][] = array('title' => "$day Days", 'value' => $day);
-		return $criteria;
-	}
-
-	private function carCare($id, $brandkey, $affiliateid = null) {
-		$criteria = array(
-			'criteriaid' => "$id",
-			'title' => 'Car Care Customers',
-			'description' => 'Select vehicle owners',
-			'criteria' => array(
-				array(
-					'criterionid' => 'visitedrange',
-					'type' => 'daterange',
-					'title' => 'Visited',
-					'description' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet',
-				),
-				array(
-					'criterionid' => 'vehicles',
-					'type' => 'nested',
-					'title' => 'Vehicles',
-					'description' => 'Choose the vehicles, makes and models, etc',
-					'options' => $this->vehicleOptions($brandkey, $affiliateid),
-				),
-				array(
-					'criterionid' => 'mileage',
-					'type' => 'range',
-					'title' => 'Vehicle Mileage',
-					'description' => 'Choose target vehicle mileage',
-					'min' => 0,
-					'max' => 1000000000,
-					'defaultMaxLabel' => 'Unlimited',
-				),
-				array(
-					'criterionid' => 'maxvehicles',
-					'type' => 'selectSingle',
-					'title' => 'Maximum Vehicles',
-					'description' => 'Up to how many vehicles...',
-					'options' => array(1, 2, 3, 4),
-				),
-				array(
-					'criterionid' => 'custloyalty',
-					'type' => 'selectMany',
-					'title' => 'Customer Loyalty',
-					'description' => 'Choose the target loyalty programs',
-					'options' => array('New Customer', 'Lost', 'Oil Change Only', 'Oil Change+', 'Specialty Service')
-				),
-				array(
-					'criterionid' => 'carcareclub',
-					'type' => 'option',
-					'title' => '',
-					'option' => array('value' => 'eCarCareClub', 'title' => 'Include customers enrolled in the eCarCare Club')
-				),
-			)
-		);
-		return $criteria;
-	}
-
-	private function vehicleOptions($brandkey, $affiliateid = null) {
-		$sql = "select distinct make, model
-			from recipient
-			where brandkey = '$brandkey'";
-
-		if($affiliateid)
-			$sql .= "\nand affiliateid = $affiliateid";
-
-		$sql .= "\norder by make, model";
-
-		$result = $this->db->query($sql);
-
-		$options = array();
-		$idx = -1;
-		$lastMake = null;
-
-		while($data= $result->fetchArray()) {
-			$make = $data[0];
-			$model = $data[1];
-
-			if($make != $lastMake) {
-				$options[++$idx] = array(
-					'value' => $make,
-					'title' => $make,
-					'criteria' => array(
-						'criterionid' => 'models',
-						'type' => 'selectMany',
-						'title' => 'Model',
-						'options' => array(),
-					));
-				$lastMake = $make;
-			}
-			$options[$idx]['criteria']['options'][] = $model;
-		}
-
-		$years = array();
-		for($yr = 2013; $yr >= 1999; $yr--)
-			$years[] = $yr;
-
-		return array(
-			array(
-				'title' => 'All Vehicles', 'criteria' => array()),
-			array(
-				'title' => 'Specific Vehicles', 'criteria' => array(
-					array(
-						'criterionid' => 'make',
-						'title' => 'Make',
-						'type' => 'nestedSelect',
-						'options' => $options
-					),
-					array(
-						'criterionid' => 'year',
-						'title' => 'Year(s)',
-						'type' => 'selectMany',
-						'options' => $years
-					)
-				),
-			)
-		);
+		return $options;
 	}
 
 }

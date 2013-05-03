@@ -26,9 +26,10 @@ Single Criteria
 ---------------
 To retrieve an individual criteria specification, append the `critieriaid` to the resource:
 
-<a href="medium/directmail/brand/acme/criteria/12345" target="if2">/medium/directmail/brand/acme/criteria/12345</a>
-<a href="medium/directmail/brand/acme/criteria/12456" target="if2">/medium/directmail/brand/acme/criteria/12456</a>
-<a href="medium/directmail/brand/oscorp/criteria/osc101" target="if2">/medium/directmail/brand/oscorp/criteria/osc101</a>
+<a href="medium/directmail/brand/acme/criteria/demo" target="if2">/medium/directmail/brand/acme/criteria/demo</a>
+<a href="medium/directmail/brand/acme/criteria/newmovers" target="if2">/medium/directmail/brand/acme/criteria/newmovers</a>
+<a href="medium/directmail/brand/oscorp/criteria/carcare" target="if2">/medium/directmail/brand/oscorp/criteria/carcare</a>
+<a href="medium/directmail/brand/oscorp/criteria/demo" target="if2">/medium/directmail/brand/oscorp/criteria/demo</a>
 <iframe name="if2" src="about:blank"></iframe>
 
 * * *
@@ -36,8 +37,12 @@ To retrieve an individual criteria specification, append the `critieriaid` to th
 Affiliate Specific Criteria
 ---------------------------
 In some cases the criteria and options will differ based on wether the campaign is executed across the entire national brand or for a specific affiliate. In the following example, the criteria is specifically for a single affiliate. Notice how the options differ in these examples from the previous examples:
-<a href="medium/directmail/brand/acme/affiliate/45/criteria/12456" target="if3">/medium/directmail/brand/acme/affiliate/45/criteria/12456</a>
-<a href="medium/directmail/brand/acme/affiliate/32/criteria/12456" target="if3">/medium/directmail/brand/acme/affiliate/32/criteria/12456</a>
+<a href="medium/directmail/brand/acme/affiliate/45/criteria/demo" target="if3">/medium/directmail/brand/acme/affiliate/45/criteria/demo</a>
+<a href="medium/directmail/brand/acme/affiliate/32/criteria/demo" target="if3">/medium/directmail/brand/acme/affiliate/32/criteria/demo</a>
+<a href="medium/directmail/brand/oscorp/affiliate/75/criteria/demo" target="if3">/medium/directmail/brand/oscorp/affiliate/75/criteria/demo</a>
+<a href="medium/directmail/brand/oscorp/affiliate/77/criteria/demo" target="if3">/medium/directmail/brand/oscorp/affiliate/77/criteria/demo</a>
+<a href="medium/directmail/brand/oscorp/affiliate/75/criteria/carcare" target="if3">/medium/directmail/brand/oscorp/affiliate/75/criteria/carcare</a>
+<a href="medium/directmail/brand/oscorp/affiliate/77/criteria/carcare" target="if3">/medium/directmail/brand/oscorp/affiliate/77/criteria/carcare</a>
 <iframe name="if3" src="about:blank"></iframe>
 
 * * *
@@ -45,8 +50,8 @@ In some cases the criteria and options will differ based on wether the campaign 
 Create a List Request
 -----------------------
 
-<form action="/medium/directmail/brand/oscorp/criteria/osc101/list" method="post" target="iframe1">
-	<strong>POST to :</strong> medium/directmail/brand/oscorp/criteria/osc101/list<br/>
+<form action="/medium/directmail/brand/oscorp/criteria/carcare/list" method="post" target="iframe1">
+	<strong>POST to :</strong> medium/directmail/brand/oscorp/criteria/carcare/list<br/>
 	<br/>
 
 	selections:<br/>
