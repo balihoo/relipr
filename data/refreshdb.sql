@@ -40,6 +40,35 @@ create table recipient(
 	dogowner integer not null,
 	petowner integer not null
 );
+
+create index idx_recipient_affiliateid on recipient(affiliateid);
+create index idx_recipient_brandkey on recipient(brandkey);
+create index idx_recipient_birthdate on recipient(birthdate);
+create index idx_recipient_age on recipient(age);
+create index idx_recipient_gender on recipient(gender);
+create index idx_recipient_income on recipient(income);
+create index idx_recipient_email on recipient(email);
+create index idx_recipient_emailsubscribed on recipient(emailsubscribed);
+create index idx_recipient_emailunsubscribed on recipient(emailunsubscribed);
+create index idx_recipient_emailbounced on recipient(emailbounced);
+create index idx_recipient_city on recipient(city);
+create index idx_recipient_state on recipient(state);
+create index idx_recipient_zip on recipient(zip);
+create index idx_recipient_movedin on recipient(movedin);
+create index idx_recipient_year on recipient(year);
+create index idx_recipient_make on recipient(make);
+create index idx_recipient_model on recipient(model);
+create index idx_recipient_lastvisit on recipient(lastvisit);
+create index idx_recipient_lastspendamount on recipient(lastspendamount);
+create index idx_recipient_mileage on recipient(mileage);
+create index idx_recipient_loyaltyprogram on recipient(loyaltyprogram);
+create index idx_recipient_ecareclub on recipient(ecareclub);
+create index idx_recipient_householdmembers on recipient(householdmembers);
+create index idx_recipient_haschildren on recipient(haschildren);
+create index idx_recipient_catowner on recipient(catowner);
+create index idx_recipient_dogowner on recipient(dogowner);
+create index idx_recipient_petowner on recipient(petowner);
+
 select 'Created recipient table';
 
 -- Load the recipient table with values from the csv file
