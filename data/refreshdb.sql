@@ -91,10 +91,10 @@ create table status(
 
 insert into status(status)
 select 'New' status
-union select 'Purchased'
-union select 'Available'
+union select 'Submitted'
+union select 'Final Count'
+union select 'List Ready'
 union select 'Canceled'
-union select 'Expired'
 ;
 
 select 'Created status table';
