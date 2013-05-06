@@ -8,7 +8,17 @@
 		</style>
 	</head>
 	<body>
-		<h2>Configuration checklist:</h2>
+		<h2>ReLiPr Console</h2>
+
+		<h3>Links</h3>
+		<ul>
+			<li><a href="docs">Live API Documentation</a></li>
+			<li><a href="https://github.com/pauldprice/relipr">Source code &amp; install instructions</a></li>
+			<li><a href="https://docs.google.com/document/d/1QSqS5QpAx4wG7__ZQaLScTmpd-IqiEBJD0Mth9926Wg/edit?usp=sharing">Detailed Documentation &amp; API Specification</a></li>
+		</ul>
+
+		<hr/>
+		<h3>Configuration checklist:</h3>
 		<ul>
 <?php
 foreach($this->check as $label => $pass) {
