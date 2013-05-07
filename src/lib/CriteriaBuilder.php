@@ -1,6 +1,5 @@
 <?php
 
-require_once 'Selection.php';
 require_once 'OptionBuilder.php';
 require_once 'CriteriaBase.php';
 

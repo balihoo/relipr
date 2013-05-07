@@ -47,24 +47,51 @@ In some cases the criteria and options will differ based on wether the campaign 
 
 * * *
 
-Create a List Request
------------------------
+Create a New List
+-----------------
 
-<form action="/medium/directmail/brand/oscorp/criteria/carcare/list" method="post" target="iframe1">
+<form action="/medium/directmail/brand/oscorp/criteria/carcare/list" method="post" target="if4">
 	<strong>POST to :</strong> medium/directmail/brand/oscorp/criteria/carcare/list<br/>
 	<br/>
 
-	selections:<br/>
-	<textarea name="selections" cols="40" rows="9">{
+	columns<br/> <input type="text" name="columns" size="50" value="*"/><br/>
+
+	filter<br/>
+	<textarea name="filter" cols="40" rows="9">{
  "affiliates": [75],
  "visitedrange": ["2012-03-01", null],
  "vehicle": ["Ford", "Chevrolet", "Toyota"],
  "mileage": [null, 150000],
  "custloyalty": ["Oil Change", "Oil Change+"]
-}</textarea><br/>
+}</textarea><br/><br/>
+
+	requestedcount<br/> <input type="text" name="requestedcount" value="100"/><br/>
 	<input type="submit" value="POST"/>
 </form>
-<iframe name="iframe1" src="about:blank"></iframe>
+<script>
+	function frameload(frm) {
+		txt = frm.contentWindow.document.body.innerText;
+		if(txt != '') {
+			listid = JSON.parse(txt).listid;
+			links = document.getElementsByTagName('a');
+			for (var i =  0; links.length > i; i++) {
+				link = links[i];
+				if(/list\/[0-9]+$/.test(link.href)) {
+					link.href = link.href.replace(/[0-9]+$/, listid);
+					link.innerText = link.innerText.replace(/[0-9]+$/, listid);
+				}
+			};
+		}
+	}
+</script>
+<iframe name="if4" src="about:blank" onload="frameload(this)"></iframe>
+
+* * *
+
+Retrieve List Details
+---------------------
+<a href="/medium/directmail/brand/oscorp/criteria/carcare/list/0" target="if5">/medium/directmail/brand/oscorp/criteria/carcare/list/0</a><br/>
+<iframe name="if5" src="about:blank"></iframe>
 
 Calculate List Cost & Count
 -----------------------------

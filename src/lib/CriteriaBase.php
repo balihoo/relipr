@@ -37,51 +37,49 @@ abstract class CriteriaBase
 		}
 	}
 
-	public function buildQuery(Selection $selection) {
-		$data = $selection->data;
-
+	public function buildQuery($filter) {
 		$sql = "from recipient where";
 		$sql .= " brandkey = '{$this->brandkey}'";
 
-		$sql .= $this->inClause($data, 'affiliates', 'affiliateid', true);
+		$sql .= $this->inClause($filter, 'affiliates', 'affiliateid', true);
 
-		if(isset($data->visitedrange) and count($data->visitedrange) == 2) {
-			$r1 = $data->visitedrange[0];
-			$r2 = $data->visitedrange[1];
+		if(isset($filter->visitedrange) and count($filter->visitedrange) == 2) {
+			$r1 = $filter->visitedrange[0];
+			$r2 = $filter->visitedrange[1];
 			if($r1)
 				$sql .= " and lastvisit >= '$r1'";
 			if($r2)
 				$sql .= " and lastvisit <= '$r2'";
 		}
 
-		if(isset($data->vehicle) and count($data->vehicle) > 0) {
+		if(isset($filter->vehicle) and count($filter->vehicle) > 0) {
 			$sql .= " and make in (";
-			foreach($data->vehicle as $make) {
+			foreach($filter->vehicle as $make) {
 				$sql .= "'$make',";
 			}
 			$sql .= "'')";
 		}
 
-		if(isset($data->mileage) and count($data->mileage) == 2) {
-			$m1 = $data->mileage[0];
-			$m2 = $data->mileage[1];
+		if(isset($filter->mileage) and count($filter->mileage) == 2) {
+			$m1 = $filter->mileage[0];
+			$m2 = $filter->mileage[1];
 			if($m1)
 				$sql .= " and mileage >= $m1";
 			if($m2)
 				$sql .= " and mileage <= $m2";
 		}
 
-		if(isset($data->custloyalty) and count($data->custloyalty) > 0) {
+		if(isset($filter->custloyalty) and count($filter->custloyalty) > 0) {
 			$sql .= " and loyaltyprogram in (";
-			foreach($data->custloyalty as $prog) {
+			foreach($filter->custloyalty as $prog) {
 				$sql .= "'$prog',";
 			}
 			$sql .= "'')";
 		}
 
-		if(isset($data->gender) and count($data->gender) > 0) {
+		if(isset($filter->gender) and count($filter->gender) > 0) {
 			$sql .= " and gender in (";
-			foreach($data->gender as $gender) {
+			foreach($filter->gender as $gender) {
 				$sql .= "'$gender',";
 			}
 			$sql .= "'')";

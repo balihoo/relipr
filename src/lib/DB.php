@@ -1,5 +1,7 @@
 <?php
 
+require_once 'ListDTO.php';
+
 use Tonic\Response,
 		Tonic\UnauthorizedException,
 		Tonic\NotFoundException,
@@ -77,29 +79,81 @@ class DB {
 		return $this->db->query($sql);
 	}
 
-	// Create a new list object
-	public function createList(Selection $selection, $medium, $brandkey, $criteriaid, $limit) {
-		$count = $this->db->querySingle($selection->getCountQuery($medium, $brandkey, $criteriaid));
+	// Get a list object
+	public function getList($medium, $brandkey, $criteriaid, $listid) {
+		$sql = "select * from list where medium = '" . $this->db->escapestring($medium) . "' " .
+			" and brandkey = '" . $this->db->escapestring($brandkey) . "' " .
+			" and criteriaid = '" . $this->db->escapestring($criteriaid) . "' " .
+			" and listid = $listid;";
+		$list = $this->db->query($sql)->fetchArray(SQLITE3_ASSOC);
+		return ListDTO::fromArray($list);
+	}
 
-		$list = array(
+	public function getCountQuery($filter, $medium, $brandkey, $criteriaid) {
+		$criteriaObject = CriteriaBuilder::getCriteriaObject($medium, $brandkey, $criteriaid);
+		return "select count(*) " . $criteriaObject->buildQuery($filter);
+	}
+
+	// Create a new list object
+	public function createList($filter, $medium, $brandkey, $criteriaid, $columns, $requestedcount) {
+		$list = ListDTO::fromArray(array(
 			'listid' => null,
-			'count' => $count,
+			'count' => null,
 			'brandkey' => $brandkey,
 			'criteriaid' => $criteriaid,
 			'medium' => $medium,
-			'requestedCount' => $limit,
-			'isEstimate' => false,
-			'cost' => ($count > $limit ? $limit : $count) * .05,
-			'status' => 'New',
+			'requestedcount' => $requestedcount,
+			'isestimate' => null,
+			'cost' => null,
+			'status' => ListDTO::STATUS_NEW,
 			'callback' => null,
-			'selections' => $selection->data,
-		);
-
-		$this->db->exec("insert into list (brandkey, criteriaid, medium, selections, requestedCount,
-			count, status) values ('$brandkey', '$criteriaid', '$medium', '" .
-				$this->db->escapeString($selection->jsonText) . "', $limit, $count, 'New');");
-		$list['listid'] = $this->db->lastInsertRowID();
+			'filter' => $filter,
+			'columns' => $columns,
+		));
+		$this->saveList($list);
 		return $list;
+	}
+
+	public function saveList($list) {
+		if($list->listid === null) {
+			// Prepare the insert statement
+			$stmt = $this->db->prepare('
+			insert into list(
+				medium, brandkey, criteriaid, filter, requestedcount, count, status, columns)
+			values(
+				:medium, :brandkey, :criteriaid, :filter, :requestedcount, :count, :status, :columns);
+			');
+		} else {
+			// Prepare the update statement
+			$stmt = $this->db->prepare('
+			update list set
+				medium = :medium,
+				brandkey = :brandkey,
+				criteriaid = :criteriaid,
+				filter = :filter,
+				requestedcount = :requestedcount,
+				count = :count,
+				status = :status,
+				columns = :columns)
+			where listid = :listid
+			');
+			$stmt->bindValue(':listid', $list->listid, SQLITE3_INTEGER);
+		}
+
+		// Bind the values to their columns
+		$stmt->bindValue(':medium', $list->medium, SQLITE3_TEXT);
+		$stmt->bindValue(':brandkey', $list->brandkey, SQLITE3_TEXT);
+		$stmt->bindValue(':criteriaid', $list->criteriaid, SQLITE3_TEXT);
+		$stmt->bindValue(':filter', ListDTO::encodeFilter($list->filter), SQLITE3_TEXT);
+		$stmt->bindValue(':requestedcount', $list->requestedcount, SQLITE3_INTEGER);
+		$stmt->bindValue(':count', $list->count, SQLITE3_INTEGER);
+		$stmt->bindValue(':status', $list->status, SQLITE3_TEXT);
+		$stmt->bindValue(':columns', ListDTO::encodeColumns($list->columns), SQLITE3_TEXT);
+		$stmt->execute();
+
+		// Set the list id if this was an insert
+		if($list->listid === null)
+			$list->listid = $this->db->lastInsertRowID();
 	}
 
 	// Refresh the database back to the baseline
@@ -141,7 +195,7 @@ class DB {
 			return preg_replace('/\n/', '<br/>', $out);
 	}
 
-	// Use the recipient database to build a list of criteria selection options
+	// Use the recipient database to build a list of criteria options
 	public function getOptionsFromSQL($brandkey, $affiliateid, $sql, $on, $group, $order) {
 		$sql .= " left join recipient r on $on and r.brandkey = '$brandkey'";
 		if($affiliateid)

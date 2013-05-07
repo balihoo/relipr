@@ -1,13 +1,13 @@
 <?php
 
 require_once('BasicResource.php');
-require_once('Selection.php');
 
 use Tonic\Response;
 
 /**
  * This class defines the list resource 
  * @uri /medium/:medium/brand/:brandkey/criteria/:criteriaid/list
+ * @uri /medium/:medium/brand/:brandkey/criteria/:criteriaid/list/:listid
  */
 class ListResource extends BasicResource{
 
@@ -19,20 +19,37 @@ class ListResource extends BasicResource{
 	 * @json
 	 */
 	public function post(){
-		// Get the criteria selection
-		if(!isset($_POST['selections']) || trim($_POST['selections']) == '')
-			return new Response(Response::BADREQUEST, "Missing or empty 'selections'");
+		// Get the criteria filter
+		if(!isset($_POST['filter']) || trim($_POST['filter']) == '')
+			return new Response(Response::BADREQUEST, "Missing or empty 'filter'");
+
+		// Get the columns
+		if(!isset($_POST['columns']) || trim($_POST['columns']) == '')
+			return new Response(Response::BADREQUEST, "Missing or empty 'columns'");
+
+		// Get the requestednount
+		if(!isset($_POST['requestedcount']) || trim($_POST['requestedcount']) == '')
+			return new Response(Response::BADREQUEST, "Missing or empty 'requestedcount'");
+
 		try {
-			$selection = new Selection($_POST['selections']);
+			$list = $this->db->createList($_POST['filter'], $this->medium, $this->brandkey, $this->criteriaid,
+				$_POST['columns'], $_POST['requestedcount']);
+			return new Response(Response::CREATED, $list);
 		} catch (Exception $ex) {
-			// Something bad happened while trying to pre-parse the criteria selections
 			return new Response($ex->getCode(), $ex->getMessage());
 		}
+	}
 
-		//$affiliateid = isset($this->affiliateid) ? $this->affiliateid : null;
-		//$criteria = $this->db->getCriteria($this->medium, $this->brandkey, $this->criteriaid, $affiliateid);
-		$list = $this->db->createList($selection, $this->medium, $this->brandkey, $this->criteriaid, 100);
-		return new Response(Response::CREATED, $list);
+	/**
+	 * Get a list object by its id
+	 * @method GET
+	 * @auth
+	 * @valid
+	 * @json
+	 */
+	public function get(){
+		$list = $this->db->getList($this->medium, $this->brandkey, $this->criteriaid, $this->listid);
+		return new Response(Response::OK, $list);
 	}
 
 }
