@@ -130,9 +130,9 @@ class CriteriaSection extends CriteriaList
 abstract class Criterion
 {
 	public $criterionid;
-	public $type = '';
-	public $title = '';
-	public $description = '';
+	public $type = null;
+	public $helpText = "", $description = "", $title = "",
+		$defaultvalue = null, $editable = false, $hidden = false;
 
 	public function __construct ($criterionid, $title, $description = null) {
 		$this->criterionid = $criterionid;
@@ -156,6 +156,7 @@ class CriterionSelect extends Criterion
 class CriterionMultiSelect extends CriterionSelect
 {
 	public $type = 'selectmultiple';
+	public $maxselections = null;
 }
 
 class CriterionNested extends CriterionSelect
@@ -168,7 +169,13 @@ class CriterionRange extends Criterion
 	public $type = 'range';
 }
 
-class CriterionDateRange extends CriterionRange
+class CriterionDate extends Criterion
+{
+	public $type = 'date';
+	public $mindate = null, $maxdate = null;
+}
+
+class CriterionDateRange extends CriterionDate
 {
 	public $type = 'daterange';
 }

@@ -73,14 +73,21 @@ Create a New List
 		txt = frm.contentWindow.document.body.innerText;
 		if(txt != '') {
 			listid = JSON.parse(txt).listid;
-			links = document.getElementsByTagName('a');
-			for (var i =  0; links.length > i; i++) {
-				link = links[i];
-				if(/list\/[0-9]+$/.test(link.href)) {
-					link.href = link.href.replace(/[0-9]+$/, listid);
-					link.innerText = link.innerText.replace(/[0-9]+$/, listid);
-				}
-			};
+			updateListId('a', 'href', listid);
+			updateListId('a', 'innerText', listid);
+			updateListId('form', 'action', listid);
+			updateListId('label', 'innerText', listid);
+		}
+	}
+	function updateListId(tagName, propName, listid) {
+		nodeList = document.getElementsByTagName(tagName);
+		for (var i =  0; nodeList.length > i; i++) {
+			node = nodeList[i];
+			if(/list\/[0-9]+/.test(node[propName])) {
+				text = node[propName] + "";
+				console.log(tagName + "" + text);
+				node[propName] = text.replace(/list\/[0-9]+/, 'list/' + listid);
+			}
 		}
 	}
 </script>
@@ -93,17 +100,24 @@ Retrieve List Details
 <a href="/medium/directmail/brand/oscorp/criteria/carcare/list/0" target="if5">/medium/directmail/brand/oscorp/criteria/carcare/list/0</a><br/>
 <iframe name="if5" src="about:blank"></iframe>
 
-Calculate List Cost & Count
------------------------------
+* * *
 
-Purchase a List
------------------
-
-Retrieve List Status
---------------------
+Submit a List
+-------------
+<form action="/medium/directmail/brand/oscorp/criteria/carcare/list/0/submit" method="post" target="if6">
+	<label>POST to: /medium/directmail/brand/oscorp/criteria/carcare/list/0/submit</label>
+	<input type="submit" value="POST"/>
+</form>
+<iframe name="if6" src="about:blank"></iframe>
 
 Cancel a List
 -------------
+<form action="/medium/directmail/brand/oscorp/criteria/carcare/list/0/cancel" method="post" target="if7">
+	<label>POST to: /medium/directmail/brand/oscorp/criteria/carcare/list/0/cancel</label>
+	<input type="submit" value="POST"/>
+</form>
+<iframe name="if7" src="about:blank"></iframe>
+
 
 Download a Prepared List
 ------------------------

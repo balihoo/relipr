@@ -19,7 +19,8 @@ class ListDTO
 		$status,
 		$callback,
 		$filter,
-		$columns;
+		$columns,
+		$links;
 
 	// Set attribute defaults
 	public function __construct() {
@@ -42,8 +43,44 @@ class ListDTO
 		$list->callback = $arr['callback'];
 		$list->setFilter($arr['filter']);
 		$list->setColumns($arr['columns']);
+		$list->updateLinks();
 
 		return $list;
+	}
+
+	private function getBaseUri() {
+		// Obviously this won't work for https, but this is just an example
+		$base = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+		// Make sure there is a slash on the end
+		if(!preg_match('/\/$/', $base))
+			$base .= "/";
+		// Make sure there is a listid at the end
+		if(!preg_match('/list\/[0-9]+\//', $base))
+			$base .= $this->listid . "/";
+
+		return preg_replace('/\/$/', '', $base);
+	}
+
+	public function updateLinks() {
+		$this->links = array();
+		$base = $this->getBaseUri();
+
+		// Add the self link to every list
+		$this->links['self'] = "$base";
+
+		// Add state specific links
+		switch($this->status) {
+			case ListDTO::STATUS_NEW:
+				$this->links['cancel'] = "$base/cancel";
+				$this->links['submit'] = "$base/submit";
+				break;
+			case ListDTO::STATUS_SUBMITTED:
+				$this->links['cancel'] = "$base/cancel";
+				break;
+			case ListDTO::STATUS_LISTREADY:
+				$this->links['download'] = "$base/download";
+				break;
+		}
 	}
 
 	public function setFilter($filter) {

@@ -5,6 +5,7 @@ require_once 'ListDTO.php';
 use Tonic\Response,
 		Tonic\UnauthorizedException,
 		Tonic\NotFoundException,
+		Tonic\ForbiddenException,
 		Tonic\Request;
 
 class DB {
@@ -86,7 +87,35 @@ class DB {
 			" and criteriaid = '" . $this->db->escapestring($criteriaid) . "' " .
 			" and listid = $listid;";
 		$list = $this->db->query($sql)->fetchArray(SQLITE3_ASSOC);
+		if($list === FALSE)
+			throw new NotFoundException("List not found");
 		return ListDTO::fromArray($list);
+	}
+
+	public function submitList($medium, $brandkey, $criteriaid, $listid) {
+		$list = $this->getList($medium, $brandkey, $criteriaid, $listid);
+		if($list->status != ListDTO::STATUS_NEW)
+			throw new ForbiddenException("This list is in status '{$list->status}' - list cannot be submitted");
+		$list->status = ListDTO::STATUS_SUBMITTED;
+		$countQuery = $this->getCountQuery($list->filter, $medium, $brandkey, $criteriaid);
+		$list->count = $this->db->querySingle($countQuery);
+		$list->isestimate = false;
+		$list->cost = $list->count * 0.05;
+		$list->updateLinks();
+		$this->saveList($list);
+		return $list;
+	}
+
+	public function cancelList($medium, $brandkey, $criteriaid, $listid) {
+		$list = $this->getList($medium, $brandkey, $criteriaid, $listid);
+		if($list->status != ListDTO::STATUS_NEW
+			&& $list->status != ListDTO::STATUS_SUBMITTED
+			&& $list->status != ListDTO::STATUS_CANCELED)
+			throw new ForbiddenException("This list is in status '{$list->status}' - too late to cancel");
+		$list->status = ListDTO::STATUS_CANCELED;
+		$list->updateLinks();
+		$this->saveList($list);
+		return $list;
 	}
 
 	public function getCountQuery($filter, $medium, $brandkey, $criteriaid) {
@@ -134,9 +163,8 @@ class DB {
 				requestedcount = :requestedcount,
 				count = :count,
 				status = :status,
-				columns = :columns)
-			where listid = :listid
-			');
+				columns = :columns
+			where listid = :listid;');
 			$stmt->bindValue(':listid', $list->listid, SQLITE3_INTEGER);
 		}
 
@@ -154,6 +182,7 @@ class DB {
 		// Set the list id if this was an insert
 		if($list->listid === null)
 			$list->listid = $this->db->lastInsertRowID();
+		$list->updateLinks();
 	}
 
 	// Refresh the database back to the baseline
