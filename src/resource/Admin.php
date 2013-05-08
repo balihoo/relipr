@@ -12,7 +12,7 @@ use Tonic\Resource,
 class Admin extends BasicResource{
 
 	/**
-	 * Produce a console
+	 * Run an administrative task based on the requested command
 	 * @method POST
 	 * @auth
 	 */

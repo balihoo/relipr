@@ -9,18 +9,20 @@ class ListDTO
 	const STATUS_LISTREADY = 'List Ready';
 
 	public $listid,
-		$count,
+		$status,
+		$medium,
 		$brandkey,
 		$criteriaid,
-		$medium,
 		$requestedcount,
+		$count,
 		$isestimate,
 		$cost,
-		$status,
 		$callback,
 		$filter,
 		$columns,
 		$links;
+
+	private $canceled, $cancelnotified, $counted, $countnotified, $readied, $readynotified;
 
 	// Set attribute defaults
 	public function __construct() {
@@ -29,7 +31,7 @@ class ListDTO
 		$this->columns = array();
 	}
 
-	public static function fromArray($arr) {
+	public static function fromArray($arr, $complete = true) {
 		$list = new ListDTO();
 		$list->listid = $arr['listid'];
 		$list->count = $arr['count'];
@@ -45,8 +47,25 @@ class ListDTO
 		$list->setColumns($arr['columns']);
 		$list->updateLinks();
 
+		if($complete) {
+			$list->canceled = $arr['canceled'];
+			$list->cancelnotified = $arr['cancelnotified'];
+			$list->counted = $arr['counted'];
+			$list->countnotified = $arr['countnotified'];
+			$list->readied = $arr['readied'];
+			$list->readynotified = $arr['readynotified'];
+		}
+
 		return $list;
 	}
+
+	public function getCanceled() { return $this->canceled; }
+	public function getCancelNotified() { return $this->cancelnotified; }
+	public function getCounted() { return $this->counted; }
+	public function getCountNotified() { return $this->countnotified; }
+	public function getReadied() { return $this->readied; }
+	public function getReadyNotified() { return $this->readynotified; }
+
 
 	private function getBaseUri() {
 		// Obviously this won't work for https, but this is just an example
@@ -116,23 +135,6 @@ class ListDTO
 
 	public static function encodeColumns($columns) {
 		return implode(',', $columns);
-	}
-
-	public static function toArray($arr) {
-		$arr = array();
-
-		$arr['listid'] = $this->listid;
-		$arr['count'] = $this->count;
-		$arr['brandkey'] = $this->brandkey;
-		$arr['criteriaid'] = $this->criteriaid;
-		$arr['medium'] = $this->medium;
-		$arr['requestedcount'] = $this->requestedcount;
-		$arr['isestimate'] = $this->isestimate;
-		$arr['cost'] = $this->cost;
-		$arr['status'] = $this->status;
-		$arr['callback'] = $this->callback;
-		$arr['filter'] = json_encode($this->filter);
-		$arr['columns'] = self::encodeColumns($this->columns);
 	}
 
 	private static function getJsonErrorMessage($code) {

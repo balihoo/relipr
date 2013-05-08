@@ -65,32 +65,12 @@ Create a New List
  "custloyalty": ["Oil Change", "Oil Change+"]
 }</textarea><br/><br/>
 
-	requestedcount<br/> <input type="text" name="requestedcount" value="100"/><br/>
+	requestedcount<br/> <input type="text" name="requestedcount" value="100" size="6"/><br/>
+
+	callback<br/> <input type="text" name="callback" size="40" value="http://requestb.in/sw7a47sw"/><br/>
+
 	<input type="submit" value="POST"/>
 </form>
-<script>
-	function frameload(frm) {
-		txt = frm.contentWindow.document.body.innerText;
-		if(txt != '') {
-			listid = JSON.parse(txt).listid;
-			updateListId('a', 'href', listid);
-			updateListId('a', 'innerText', listid);
-			updateListId('form', 'action', listid);
-			updateListId('label', 'innerText', listid);
-		}
-	}
-	function updateListId(tagName, propName, listid) {
-		nodeList = document.getElementsByTagName(tagName);
-		for (var i =  0; nodeList.length > i; i++) {
-			node = nodeList[i];
-			if(/list\/[0-9]+/.test(node[propName])) {
-				text = node[propName] + "";
-				console.log(tagName + "" + text);
-				node[propName] = text.replace(/list\/[0-9]+/, 'list/' + listid);
-			}
-		}
-	}
-</script>
 <iframe name="if4" src="about:blank" onload="frameload(this)"></iframe>
 
 * * *
@@ -118,10 +98,41 @@ Cancel a List
 </form>
 <iframe name="if7" src="about:blank"></iframe>
 
+Invoke Callbacks
+----------------
+This is executed as a background job every minute. If you want to rush it along for testing, hit the 'Invoke Callbacks' button. The result is an array of details about
+<form action="/jobs/callbacks" method="POST" target="ifjobs">
+	<input type="submit" value="Invoke Callbacks"/>
+</form>
+<iframe name="ifjobs" src="about:blank"></iframe>
 
 Download a Prepared List
 ------------------------
 
 Updating Recipient Specific Results
 -----------------------------------
+
+<script>
+	function frameload(frm) {
+		txt = frm.contentWindow.document.body.innerText;
+		if(txt != '') {
+			listid = JSON.parse(txt).listid;
+			updateListId('a', 'href', listid);
+			updateListId('a', 'innerText', listid);
+			updateListId('form', 'action', listid);
+			updateListId('label', 'innerText', listid);
+		}
+	}
+	function updateListId(tagName, propName, listid) {
+		nodeList = document.getElementsByTagName(tagName);
+		for (var i =  0; nodeList.length > i; i++) {
+			node = nodeList[i];
+			if(/list\/[0-9]+/.test(node[propName])) {
+				text = node[propName] + "";
+				console.log(tagName + "" + text);
+				node[propName] = text.replace(/list\/[0-9]+/, 'list/' + listid);
+			}
+		}
+	}
+</script>
 

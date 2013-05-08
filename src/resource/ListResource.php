@@ -31,9 +31,14 @@ class ListResource extends BasicResource{
 		if(!isset($_POST['requestedcount']) || trim($_POST['requestedcount']) == '')
 			return new Response(Response::BADREQUEST, "Missing or empty 'requestedcount'");
 
+		// Get the callback url
+		if(!isset($_POST['callback']) || trim($_POST['callback']) == '')
+			return new Response(Response::BADREQUEST, "Missing or empty 'callback'");
+
+
 		try {
 			$list = $this->db->createList($_POST['filter'], $this->medium, $this->brandkey, $this->criteriaid,
-				$_POST['columns'], $_POST['requestedcount']);
+				$_POST['columns'], $_POST['requestedcount'], $_POST['callback']);
 			return new Response(Response::CREATED, $list);
 		} catch (Exception $ex) {
 			return new Response($ex->getCode(), $ex->getMessage());

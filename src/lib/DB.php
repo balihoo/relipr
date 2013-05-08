@@ -102,19 +102,28 @@ class DB {
 		$list->isestimate = false;
 		$list->cost = $list->count * 0.05;
 		$list->updateLinks();
-		$this->saveList($list);
+		$this->saveList($list, array('submitted = datetime()'));
 		return $list;
 	}
 
 	public function cancelList($medium, $brandkey, $criteriaid, $listid) {
-		$list = $this->getList($medium, $brandkey, $criteriaid, $listid);
+ 		$list = $this->getList($medium, $brandkey, $criteriaid, $listid);
+
+		// Idempotence: if already canceled then do nothing
+		if($list->status == ListDTO::STATUS_CANCELED)
+			return $list;
+
+		// Make sure that the list is in a cancellable status
 		if($list->status != ListDTO::STATUS_NEW
-			&& $list->status != ListDTO::STATUS_SUBMITTED
-			&& $list->status != ListDTO::STATUS_CANCELED)
+			&& $list->status != ListDTO::STATUS_SUBMITTED)
 			throw new ForbiddenException("This list is in status '{$list->status}' - too late to cancel");
+
+		// Update the status to cancelled
 		$list->status = ListDTO::STATUS_CANCELED;
+		// Calculate the new links
 		$list->updateLinks();
-		$this->saveList($list);
+		// Save and return the list
+		$this->saveList($list, array('canceled = datetime()'));
 		return $list;
 	}
 
@@ -124,7 +133,7 @@ class DB {
 	}
 
 	// Create a new list object
-	public function createList($filter, $medium, $brandkey, $criteriaid, $columns, $requestedcount) {
+	public function createList($filter, $medium, $brandkey, $criteriaid, $columns, $requestedcount, $callback) {
 		$list = ListDTO::fromArray(array(
 			'listid' => null,
 			'count' => null,
@@ -135,28 +144,32 @@ class DB {
 			'isestimate' => null,
 			'cost' => null,
 			'status' => ListDTO::STATUS_NEW,
-			'callback' => null,
+			'callback' => $callback,
 			'filter' => $filter,
 			'columns' => $columns,
-		));
+		), false);
 		$this->saveList($list);
 		return $list;
 	}
 
-	public function saveList($list) {
+	public function saveList($list, $updates = null) {
 		if($list->listid === null) {
 			// Prepare the insert statement
-			$stmt = $this->db->prepare('
+			$stmt = $this->db->prepare("
 			insert into list(
-				medium, brandkey, criteriaid, filter, requestedcount, count, status, columns)
+				medium, brandkey, criteriaid, filter, requestedcount,
+				count, status, columns, callback, inserted, cancelnotified, readied)
 			values(
-				:medium, :brandkey, :criteriaid, :filter, :requestedcount, :count, :status, :columns);
-			');
+				:medium, :brandkey, :criteriaid, :filter, :requestedcount,
+				:count, :status, :columns, :callback, datetime(), null, null);
+			");
 		} else {
-			// Prepare the update statement
-			$stmt = $this->db->prepare('
-			update list set
-				medium = :medium,
+			$sql = 'update list set ';
+			if($updates) {
+				foreach($updates as $update)
+					$sql .= "$update ,";
+			}
+			$sql .= 'medium = :medium,
 				brandkey = :brandkey,
 				criteriaid = :criteriaid,
 				filter = :filter,
@@ -164,7 +177,9 @@ class DB {
 				count = :count,
 				status = :status,
 				columns = :columns
-			where listid = :listid;');
+			where listid = :listid;';
+			// Prepare the update statement
+			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(':listid', $list->listid, SQLITE3_INTEGER);
 		}
 
@@ -177,12 +192,32 @@ class DB {
 		$stmt->bindValue(':count', $list->count, SQLITE3_INTEGER);
 		$stmt->bindValue(':status', $list->status, SQLITE3_TEXT);
 		$stmt->bindValue(':columns', ListDTO::encodeColumns($list->columns), SQLITE3_TEXT);
+		$stmt->bindValue(':callback', $list->callback, SQLITE3_TEXT);
 		$stmt->execute();
 
 		// Set the list id if this was an insert
 		if($list->listid === null)
 			$list->listid = $this->db->lastInsertRowID();
 		$list->updateLinks();
+	}
+
+	// Get an array of all the lists that have a callback that needs to be invoked
+	public function getPendingCallbacks() {
+		// Find all the lists that have a callback hook registered
+		//  and have a status change that has not been propogated to the caller
+		$sql = <<<SQL
+			select * from list
+			where callback is not null and callbackfailures < 5
+				and ((canceled is not null and cancelnotified is null)
+				or (counted is not null and countnotified is null)
+				or (readied is not null and readynotified is null));
+SQL;
+		$result = $this->db->query($sql);
+		$lists = array();
+		while($data= $result->fetchArray()) {
+			$lists[] = ListDTO::fromArray($data);
+		}
+		return $lists;
 	}
 
 	// Refresh the database back to the baseline
