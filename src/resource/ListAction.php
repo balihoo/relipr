@@ -32,7 +32,8 @@ class ListAction extends BasicResource{
 	}
 
 	private function cancelList() {
-		$list = $this->db->cancelList($this->medium, $this->brandkey, $this->criteriaid, $this->listid);
+		$list = $this->db->getList($this->medium, $this->brandkey, $this->criteriaid, $this->listid);
+		$this->db->cancelList($list);
 		return new Response(Response::OK, $list);
 	}
 

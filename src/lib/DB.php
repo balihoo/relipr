@@ -97,18 +97,29 @@ class DB {
 		if($list->status != ListDTO::STATUS_NEW)
 			throw new ForbiddenException("This list is in status '{$list->status}' - list cannot be submitted");
 		$list->status = ListDTO::STATUS_SUBMITTED;
-		$countQuery = $this->getCountQuery($list->filter, $medium, $brandkey, $criteriaid);
-		$list->count = $this->db->querySingle($countQuery);
-		$list->isestimate = false;
-		$list->cost = $list->count * 0.05;
 		$list->updateLinks();
 		$this->saveList($list, array('submitted = datetime()'));
 		return $list;
 	}
 
-	public function cancelList($medium, $brandkey, $criteriaid, $listid) {
- 		$list = $this->getList($medium, $brandkey, $criteriaid, $listid);
+	public function countList($list) {
+		$countQuery = $this->getCountQuery($list->filter, $list->medium, $list->brandkey, $list->criteriaid);
+		$list->count = $this->db->querySingle($countQuery);
+		$list->isestimate = false;
+		$list->cost = $list->count * 0.05;
 
+		// Automatically cancel the list if the count is 0
+		if($list->count == 0) {
+			$this->cancelList($list);
+		} else {
+			// Save the list if it has a non-zero count
+			$list->status = ListDTO::STATUS_FINALCOUNT;
+			$list->updateLinks();
+			$this->saveList($list, array('counted= datetime()'));
+		}
+	}
+
+	public function cancelList($list) {
 		// Idempotence: if already canceled then do nothing
 		if($list->status == ListDTO::STATUS_CANCELED)
 			return $list;
@@ -158,10 +169,10 @@ class DB {
 			$stmt = $this->db->prepare("
 			insert into list(
 				medium, brandkey, criteriaid, filter, requestedcount,
-				count, status, columns, callback, inserted, cancelnotified, readied)
+				count, status, columns, callback, isestimate, cost, inserted, cancelnotified, readied)
 			values(
 				:medium, :brandkey, :criteriaid, :filter, :requestedcount,
-				:count, :status, :columns, :callback, datetime(), null, null);
+				:count, :status, :columns, :callback, :isestimate, :cost, datetime(), null, null);
 			");
 		} else {
 			$sql = 'update list set ';
@@ -176,7 +187,9 @@ class DB {
 				requestedcount = :requestedcount,
 				count = :count,
 				status = :status,
-				columns = :columns
+				columns = :columns,
+				isestimate = :isestimate,
+				cost = :cost
 			where listid = :listid;';
 			// Prepare the update statement
 			$stmt = $this->db->prepare($sql);
@@ -193,6 +206,8 @@ class DB {
 		$stmt->bindValue(':status', $list->status, SQLITE3_TEXT);
 		$stmt->bindValue(':columns', ListDTO::encodeColumns($list->columns), SQLITE3_TEXT);
 		$stmt->bindValue(':callback', $list->callback, SQLITE3_TEXT);
+		$stmt->bindValue(':isestimate', $list->isestimate, SQLITE3_INTEGER);
+		$stmt->bindValue(':cost', $list->cost, SQLITE3_FLOAT);
 		$stmt->execute();
 
 		// Set the list id if this was an insert
@@ -214,9 +229,18 @@ class DB {
 SQL;
 		$result = $this->db->query($sql);
 		$lists = array();
-		while($data= $result->fetchArray()) {
+		while($data = $result->fetchArray())
 			$lists[] = ListDTO::fromArray($data);
-		}
+		return $lists;
+	}
+
+	public function findLists($status) {
+		$sql = "select * from list where status = '" .
+			$this->db->escapestring($status) . "';";
+		$result = $this->db->query($sql);
+		$lists = array();
+		while($data = $result->fetchArray())
+			$lists[] = ListDTO::fromArray($data);
 		return $lists;
 	}
 

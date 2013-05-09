@@ -98,13 +98,27 @@ Cancel a List
 </form>
 <iframe name="if7" src="about:blank"></iframe>
 
-Invoke Callbacks
-----------------
-This is executed as a background job every minute. If you want to rush it along for testing, hit the 'Invoke Callbacks' button. The result is an array of details about
-<form action="/jobs/callbacks" method="POST" target="ifjobs">
-	<input type="submit" value="Invoke Callbacks"/>
+Background Jobs
+---------------
+The following actions are not normally invoked via the API, but are triggered events that occur while processing and preparing a list. These actions will be invoked by background processing, but you can rush them along for testing.
+
+<form action="/jobs/callback" method="POST" target="ifjob">
+	<input type="submit" value="Run Callbacks"/>
+	Run any pending callback events. If a list has been cancelled, counted or readied then the event and list will be posted to the provided callback url.
 </form>
-<iframe name="ifjobs" src="about:blank"></iframe>
+
+<form action="/jobs/count" method="POST" target="ifjob">
+	<input type="submit" value="Calculate Counts"/>
+	Calculate count and cost for any lists that have been submitted, this will move the list into the 'Final Count' status and will call event callback handlers.
+</form>
+
+<form action="/jobs/ready" method="POST" target="ifjob">
+	<input type="submit" value="Finalize Lists"/>
+	This will move lists from the 'Final Count' status to the 'List Ready' status and will call event callback handlers.
+</form>
+
+<iframe name="ifjob" src="about:blank"></iframe>
+
 
 Download a Prepared List
 ------------------------

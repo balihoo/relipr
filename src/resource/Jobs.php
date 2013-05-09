@@ -19,12 +19,35 @@ class Jobs extends BasicResource{
 	 */
 	public function dispatch($jobname){
 		switch($jobname) {
-			case 'callbacks': return $this->executeCallbacks();
+			case 'callback': return $this->executeCallbacks();
+			case 'count': return $this->executeCounts();
+			case 'ready': return $this->prepareLists();
 			default:
 				return new Response(Response::NOTFOUND, "Job '$jobname' not recognized");
 		}
 	}
 
+	// Find lists that are submitted and count them
+	private function executeCounts() {
+		$lists = $this->db->findLists(ListDTO::STATUS_SUBMITTED);
+		foreach($lists as $list)
+			$this->db->countList($list);
+		return $this->executeCallbacks();
+	}
+
+	// Find lists that are in the final count status and update them to ready
+	// The delay between submit, count and ready is artificial, but useful for
+	// testing and demonstration purposes
+	private function prepareLists() {
+		$lists = $this->db->findLists(ListDTO::STATUS_FINALCOUNT);
+		foreach($lists as $list) {
+			$list->status = ListDTO::STATUS_LISTREADY;
+			$this->db->saveList($list, array('readied = datetime()'));
+		}
+		return $this->executeCallbacks();
+	}
+
+	// Find lists that have been canceled, counted or made ready for download and notify client
 	private function executeCallbacks() {
 		$lists = $this->db->getPendingCallbacks();
 		$result = array();
