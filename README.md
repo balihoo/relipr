@@ -15,7 +15,7 @@ The following shell commands should get you up and running on a clean Ubuntu ser
 
 2. Install the required packages:
 
-		sudo apt-get -y install apache2 php5 sqlite3 php5-sqlite git
+		sudo apt-get -y install apache2 php5 sqlite3 php5-sqlite php5-curl git
 
 3. Pull down the server code:
 
@@ -71,5 +71,15 @@ The following shell commands should get you up and running on a clean Ubuntu ser
 10. Click **Refresh source data file** -> wait for it to load -> hit the back button
 11. Click **Refresh Database** -> wait for it -> hit back button
 12. Refresh the page, make sure all the checklist items are blue
+
+13. Schedule cron jobs to kick of background processing
+
+		echo "* * * * *  ubuntu curl -sX POST 'http://test:letmein@localhost/jobs/callback' > /dev/null 2>&1" > /tmp/reliprcron
+		echo "*/2 * * * *  ubuntu curl -sX POST 'http://test:letmein@localhost/jobs/count' > /dev/null 2>&1" >> /tmp/reliprcron
+		echo "*/3 * * * *  ubuntu curl -sX POST 'http://test:letmein@localhost/jobs/ready' > /dev/null 2>&1" >> /tmp/reliprcron
+
+		sudo mv /tmp/reliprcron /etc/cron.d/relipr
+		sudo chown root:root /etc/cron.d/relipr
+		sudo chmod 0644 /etc/cron.d/relipr
 
 You are done!!
