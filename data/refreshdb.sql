@@ -1,7 +1,5 @@
-/*
-	This SQL file is written in the sqlite3 dialect.
-	This will stand up a new list database and load sample data.
-*/
+-- This SQL file is written in the sqlite3 dialect.
+-- This will stand up a new list database and load sample data.
 
 .bail ON
 .separator ","
