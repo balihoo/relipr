@@ -54,6 +54,7 @@ pre {
 code {
     font-family: Consolas, Monaco, Andale Mono, monospace;
     line-height: 1.5;
+		background-color: #F0F0FF;
 }
 aside {
     display: block;
