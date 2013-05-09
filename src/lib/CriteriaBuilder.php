@@ -8,8 +8,8 @@ use Tonic\NotFoundException;
 class CriteriaBuilder
 {
 	// Get an array representation of the specified criteria specification
-	public static function getCriteria($medium, $brandkey, $criteriaid, $affiliateid = null) {
-		$critObject = self::getCriteriaObject($medium, $brandkey, $criteriaid, $affiliateid);
+	public static function getCriteria($medium, $brandkey, $criteriaid, $affiliatenumber= null) {
+		$critObject = self::getCriteriaObject($medium, $brandkey, $criteriaid, $affiliatenumber);
 		$critObject->buildCriteria();
 		return $critObject->getCriteriaSpec();
 	}
@@ -38,7 +38,7 @@ class CriteriaBuilder
 	}
 
 	// Get an instance of the appropriate CriteriaBase subclass
-	public static function getCriteriaObject($medium, $brandkey, $criteriaid, $affiliateid = null) {
+	public static function getCriteriaObject($medium, $brandkey, $criteriaid, $affiliatenumber= null) {
 		// Use a naming convention to find the criteria class file
 		$classPath = self::getBasePath($medium, $brandkey) . "/$criteriaid.php";
 		if(!file_exists($classPath)) // Make sure the file actually exists
@@ -48,7 +48,7 @@ class CriteriaBuilder
 		// Figure out the class name based on this pattern
 		$className = "{$medium}_{$brandkey}_{$criteriaid}";
 		// Return a new instance of the criteria class
-		return new $className($medium, $brandkey, $criteriaid, $affiliateid);
+		return new $className($medium, $brandkey, $criteriaid, $affiliatenumber);
 	}
 }
 

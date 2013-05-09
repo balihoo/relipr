@@ -2,7 +2,7 @@
 
 class OptionBuilder
 {
-	public static function ageRange($brandkey, $affiliateid) {
+	public static function ageRange($brandkey, $affiliatenumber) {
 		$sql = <<<SQL
 select ar.range || ' (' || count(r.recipientid) || ' customers)' title, ar.lo value
 from ( select '18 - 30' range, 18 lo, 30 hi
@@ -11,22 +11,22 @@ from ( select '18 - 30' range, 18 lo, 30 hi
 	union select '65 and older', 65, 120
 ) as ar 
 SQL;
-		return DB::getInstance()->getOptionsFromSQL($brandkey, $affiliateid, $sql,
+		return DB::getInstance()->getOptionsFromSQL($brandkey, $affiliatenumber, $sql,
 			'r.age >= ar.lo and r.age <= ar.hi', 'ar.range', 'ar.lo');
 	}
 
-	public static function gender($brandkey, $affiliateid) {
+	public static function gender($brandkey, $affiliatenumber) {
 		$sql = <<<SQL
 select g.title || ' (' || count(r.recipientid) || ' customers)' title, g.value
 from( select 'Female' title, 'f' value
  union select 'Male', 'm'
 ) as g
 SQL;
-		return DB::getInstance()->getOptionsFromSQL($brandkey, $affiliateid, $sql,
+		return DB::getInstance()->getOptionsFromSQL($brandkey, $affiliatenumber, $sql,
 			'r.gender = g.value', 'g.value', 'g.title');
 	}
 
-	public static function incomeRange($brandkey, $affiliateid) {
+	public static function incomeRange($brandkey, $affiliatenumber) {
 		$sql = <<<SQL
 select ir.range || ' (' || count(r.recipientid) || ' customers)' title, ir.lo value
 from (select '$0 - $25K' range, 0 lo, 25000 hi
@@ -36,12 +36,12 @@ from (select '$0 - $25K' range, 0 lo, 25000 hi
  union select '$250K and above', 250000, 250000000
 ) as ir
 SQL;
-		return DB::getInstance()->getOptionsFromSQL($brandkey, $affiliateid, $sql,
+		return DB::getInstance()->getOptionsFromSQL($brandkey, $affiliatenumber, $sql,
 			'r.income >= ir.lo and r.income < ir.hi', 'ir.range', 'ir.lo');
 	}
 
-	public static function vehicles($brandkey, $affiliateid = null) {
-		$vehicles = DB::getInstance()->getVehicles($brandkey, $affiliateid);
+	public static function vehicles($brandkey, $affiliatenumber= null) {
+		$vehicles = DB::getInstance()->getVehicles($brandkey, $affiliatenumber);
 		$options = array();
 		$idx = -1;
 		$lastMake = null;

@@ -10,7 +10,7 @@ use Tonic\Resource,
 /**
  * This class defines the criteria 
  * @uri /medium/:medium/brand/:brandkey/criteria/:criteriaid
- * @uri /medium/:medium/brand/:brandkey/affiliate/:affiliateid/criteria/:criteriaid
+ * @uri /medium/:medium/brand/:brandkey/affiliate/:affiliatenumber/criteria/:criteriaid
  */
 class Criteria extends BasicResource{
 
@@ -22,8 +22,8 @@ class Criteria extends BasicResource{
 	 * @json
 	 */
 	public function get(){
-		$affiliateid = isset($this->affiliateid) ? $this->affiliateid : null;
-		$criteria = CriteriaBuilder::getCriteria($this->medium, $this->brandkey, $this->criteriaid, $affiliateid);
+		$affiliatenumber = isset($this->affiliatenumber) ? $this->affiliatenumber : null;
+		$criteria = CriteriaBuilder::getCriteria($this->medium, $this->brandkey, $this->criteriaid, $affiliatenumber);
 		return new Response(Response::OK, $criteria);
 	}
 

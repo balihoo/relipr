@@ -61,12 +61,12 @@ abstract class BasicResource extends Resource {
 		}
 
 		// If the affiliate parameter is set, make sure that it has records in this brand
-		if(isset($this->params['affiliateid'])) {
+		if(isset($this->params['affiliatenumber'])) {
 			if(!$brandkey)
 				throw new NotFoundException("Unable to find affiliate with no brand specified");
-			$affiliateid = $this->params['affiliateid'];
-			if($this->db->getAffiliate($brandkey, $affiliateid) == NULL)
-				throw new NotFoundException("Unable to find affiliate '$affiliateid' in brand '$brandkey'");
+			$affiliatenumber = $this->params['affiliatenumber'];
+			if($this->db->getAffiliate($brandkey, $affiliatenumber) == NULL)
+				throw new NotFoundException("Unable to find affiliate '$affiliatenumber' in brand '$brandkey'");
 		}
 
 	}

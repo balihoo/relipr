@@ -2,15 +2,15 @@
 
 abstract class CriteriaBase
 {
-	protected $criteriaid, $brandkey, $medium, $affiliateid;
+	protected $criteriaid, $brandkey, $medium, $affiliatenumber;
 
 	protected $spec;
 
-	public function __construct($medium, $brandkey, $criteriaid, $affiliateid) {
+	public function __construct($medium, $brandkey, $criteriaid, $affiliatenumber) {
 		$this->medium = $medium;
 		$this->brandkey = $brandkey;
 		$this->criteriaid = $criteriaid;
-		$this->affiliateid = $affiliateid;
+		$this->affiliatenumber= $affiliatenumber;
 
 		$this->spec = new CriteriaSpec($criteriaid, 'No title', 'No description');
 	}
@@ -41,7 +41,7 @@ abstract class CriteriaBase
 		$sql = "from recipient where";
 		$sql .= " brandkey = '{$this->brandkey}'";
 
-		$sql .= $this->inClause($filter, 'affiliates', 'affiliateid', true);
+		$sql .= $this->inClause($filter, 'affiliates', 'affiliatenumber', true);
 
 		if(isset($filter->visitedrange) and count($filter->visitedrange) == 2) {
 			$r1 = $filter->visitedrange[0];

@@ -53,8 +53,8 @@ class DB {
 	}
 
 	// Check that an affiliate exists and has recipients
-	public function getAffiliate($brandkey, $affiliateid) {
-		$sql = "select count(*) total from recipient where brandkey='$brandkey' and affiliateid=$affiliateid";
+	public function getAffiliate($brandkey, $affiliatenumber) {
+		$sql = "select count(*) total from recipient where brandkey='$brandkey' and affiliatenumber=$affiliatenumber";
 		$result = $this->db->query($sql);
 		while($result) {
 			$row = $result->fetchArray(SQLITE3_ASSOC);
@@ -72,10 +72,10 @@ class DB {
 	}
 
 	// Get a list of all vehicl makes and models
-	public function getVehicles($brandkey, $affiliateid = null) {
+	public function getVehicles($brandkey, $affiliatenumber= null) {
 		$sql = "select distinct make, model from recipient where brandkey = '$brandkey'";
-		if($affiliateid)
-			$sql .= " and affiliateid = $affiliateid";
+		if($affiliatenumber)
+			$sql .= " and affiliatenumber= $affiliatenumber";
 		$sql .= " order by make, model";
 		return $this->db->query($sql);
 	}
@@ -270,10 +270,10 @@ SQL;
 	}
 
 	// Use the recipient database to build a list of criteria options
-	public function getOptionsFromSQL($brandkey, $affiliateid, $sql, $on, $group, $order) {
+	public function getOptionsFromSQL($brandkey, $affiliatenumber, $sql, $on, $group, $order) {
 		$sql .= " left join recipient r on $on and r.brandkey = '$brandkey'";
-		if($affiliateid)
-			$sql .= " and r.affiliateid = $affiliateid ";
+		if($affiliatenumber)
+			$sql .= " and r.affiliatenumber= $affiliatenumber";
 		$sql .= "\ngroup by $group\norder by $order;";
 		$result = $this->db->query($sql);
 

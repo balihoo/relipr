@@ -7,7 +7,7 @@ select 'Refreshing database...';
 -- create the recipient table
 create table recipient(
 	recipientid integer primary key not null,
-	affiliateid integer not null,
+	affiliatenumber integer not null,
 	brandkey varchar(10) not null,
 	firstname varchar(32) not null,
 	lastname varchar(32) not null,
@@ -41,7 +41,7 @@ create table recipient(
 	petowner integer not null
 );
 
-create index idx_recipient_affiliateid on recipient(affiliateid);
+create index idx_recipient_affiliatenumber on recipient(affiliatenumber);
 create index idx_recipient_brandkey on recipient(brandkey);
 create index idx_recipient_birthdate on recipient(birthdate);
 create index idx_recipient_age on recipient(age);
