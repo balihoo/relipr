@@ -68,16 +68,9 @@ class ListDTO
 
 
 	private function getBaseUri() {
-		// Obviously this won't work for https, but this is just an example
-		$base = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-		// Make sure there is a slash on the end
-		if(!preg_match('/\/$/', $base))
-			$base .= "/";
-		// Make sure there is a listid at the end
-		if(!preg_match('/list\/[0-9]+\//', $base))
-			$base .= $this->listid . "/";
-
-		return preg_replace('/\/$/', '', $base);
+		// Obviously this won't work for https or for sites hosted on a non-root path
+		//  but this is just an example
+		return "http://$_SERVER[HTTP_HOST]/medium/{$this->medium}/brand/{$this->brandkey}/criteria/{$this->criteriaid}/list/{$this->listid}";
 	}
 
 	public function updateLinks() {
