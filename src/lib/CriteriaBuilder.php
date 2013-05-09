@@ -1,4 +1,7 @@
 <?php
+/* The CriteriaBuilder encapsulates all the details of how criterion objects are strung together
+ Scroll down to see how we define a class for each criterion type
+*/
 
 require_once 'OptionBuilder.php';
 require_once 'CriteriaBase.php';

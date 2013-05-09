@@ -1,10 +1,15 @@
+/*
+	This SQL file is written in the sqlite3 dialect.
+	This will stand up a new list database and load sample data.
+*/
+
 .bail ON
 .separator ","
 PRAGMA foreign_keys = ON;
 
 select 'Refreshing database...';
 
--- create the recipient table
+-- Create the recipient table
 create table recipient(
 	recipientid integer primary key not null,
 	affiliatenumber integer not null,
@@ -41,6 +46,7 @@ create table recipient(
 	petowner integer not null
 );
 
+-- Add a boatload of indexes to the recipient table
 create index idx_recipient_affiliatenumber on recipient(affiliatenumber);
 create index idx_recipient_brandkey on recipient(brandkey);
 create index idx_recipient_birthdate on recipient(birthdate);
@@ -72,6 +78,7 @@ create index idx_recipient_petowner on recipient(petowner);
 select 'Created recipient table';
 
 -- Load the recipient table with values from the csv file
+-- This may take some time
 select 'Populating the recipient table';
 .import "sample.csv" recipient
 
@@ -81,14 +88,15 @@ select 'Loaded ' || count(*) || ' recipients from sample.csv' from recipient;
 create table brand(
 	brandkey varchar(10) primary key not null
 );
+-- Populate the table from entries in the recipient table
 insert into brand (brandkey) select distinct brandkey from recipient;
 select 'Loaded ' || count(*) || ' brands' from brand;
 
--- create the list status table
+-- Create the list status (enumeration) table
 create table status(
 	status varchar(10) primary key not null
 );
-
+-- Load in all of the valid list statuses
 insert into status(status)
 select 'New' status
 union select 'Submitted'
@@ -96,10 +104,9 @@ union select 'Final Count'
 union select 'List Ready'
 union select 'Canceled'
 ;
-
 select 'Created status table';
 
--- create the list table
+-- Create the list table
 create table list(
 	listid integer primary key autoincrement not null,
 	brandkey varchar(10) not null,

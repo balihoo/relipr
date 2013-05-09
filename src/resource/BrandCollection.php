@@ -7,6 +7,7 @@ use Tonic\Resource,
     Tonic\ConditionException;
 
 /**
+ * The brand resource just gets a list of available brands
  * @uri /brand
  */
 class BrandCollection extends BasicResource{

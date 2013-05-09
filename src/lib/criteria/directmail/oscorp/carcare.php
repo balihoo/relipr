@@ -1,4 +1,8 @@
 <?php
+/*
+	This criteria spec shows off many of the different types of criterion that are available
+	Note how the OptionBuilder convenience class is used
+*/
 
 class directmail_oscorp_carcare extends CriteriaBase
 {

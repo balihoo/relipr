@@ -1,4 +1,9 @@
 <?php
+/*
+	This implements a fairly simple criteria specification.
+	Note how we are using the fluent interface for build()->addXXX()->addXXX(), etc
+	This is simply setting up the $spec attribute of the object
+*/
 
 class GenericDemographics extends CriteriaBase
 {

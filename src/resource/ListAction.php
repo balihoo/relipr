@@ -1,11 +1,14 @@
 <?php
+/*
+	This class defines the actions available on a list.
+	A list may be submitted, canceled or downloaded.
+*/
 
 require_once('BasicResource.php');
 
 use Tonic\Response;
 
 /**
- * This class defines the actions available on a list
  * @uri /medium/:medium/brand/:brandkey/criteria/:criteriaid/list/:listid/:command
  */
 class ListAction extends BasicResource{
@@ -18,6 +21,7 @@ class ListAction extends BasicResource{
 	 * @json
 	 */
 	public function dispatchPost(){
+		// Determine which action to take based on the :command parameter in the URL
 		switch($this->command) {
 			case 'submit': return $this->submitList();
 			case 'cancel': return $this->cancelList();
@@ -34,6 +38,7 @@ class ListAction extends BasicResource{
 	 * @json
 	 */
 	public function dispatchGet() {
+		// Determine which action to take based on the :command parameter in the URL
 		switch($this->command) {
 			case 'download': return $this->downloadList();
 			default:
@@ -41,17 +46,20 @@ class ListAction extends BasicResource{
 		}
 	}
 
+	// Try to submit the list
 	private function submitList() {
 		$list = $this->db->submitList($this->medium, $this->brandkey, $this->criteriaid, $this->listid);
 		return new Response(Response::OK, $list);
 	}
 
+	// Try to cancel the list
 	private function cancelList() {
 		$list = $this->db->getList($this->medium, $this->brandkey, $this->criteriaid, $this->listid);
 		$this->db->cancelList($list);
 		return new Response(Response::OK, $list);
 	}
 
+	// Try to download the list
 	private function downloadList() {
 		$list = $this->db->getList($this->medium, $this->brandkey, $this->criteriaid, $this->listid);
 

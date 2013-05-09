@@ -1,5 +1,10 @@
 <?php
 
+/* This is the base class that all criteria objects inherit from.
+	This class implements default behaviors for 'build' and 'buildQuery'
+
+	See src/lib/criteria/GenericDemographics.php on how to implement `buildCriteria`
+*/
 abstract class CriteriaBase
 {
 	protected $criteriaid, $brandkey, $medium, $affiliatenumber;
@@ -15,21 +20,29 @@ abstract class CriteriaBase
 		$this->spec = new CriteriaSpec($criteriaid, 'No title', 'No description');
 	}
 
+	/*
+		Subclasses must define their own buildCriteria behavior.
+		This method should build up a criteria object and assign it to $spec.
+		See src/lib/criteria/GenericDemographics.php on how to implement this method.
+	*/
 	public abstract function buildCriteria();
 	
 	public function getCriteriaSpec() {
 		return $this->spec;
 	}
 
-	private function inClause($data, $criterionid, $column, $isString = true) {
-		if(isset($data->$criterionid) and count($data->$criterionid) > 0) {
+	// Build a SQL `in` clause
+	private function inClause($filter, $criterionid, $column, $isString = true) {
+		// Only build the clause if the criterion is selected
+		if(isset($filter->$criterionid) and count($filter->$criterionid) > 0) {
 			$sql = " and $column in (";
-			foreach($data->$criterionid as $value) {
+			foreach($filter->$criterionid as $value) {
 				if($isString)
 					$sql .= "'$value',";
 				else
 					$sql .= "$value,";
 			}
+			// TODO: clean this up, it is a yucky cheat
 			$sql .= "'_')";
 			return $sql;
 		} else {
@@ -43,6 +56,9 @@ abstract class CriteriaBase
 		$sql .= " brandkey = '{$this->brandkey}'";
 
 		$sql .= $this->inClause($filter, 'affiliates', 'affiliatenumber', true);
+		$sql .= $this->inClause($filter, 'vehicle', 'make', true);
+		$sql .= $this->inClause($filter, 'custloyalty', 'loyaltyprogram', true);
+		$sql .= $this->inClause($filter, 'gender', 'gender', true);
 
 		if(isset($filter->visitedrange) and count($filter->visitedrange) == 2) {
 			$r1 = $filter->visitedrange[0];
@@ -51,14 +67,6 @@ abstract class CriteriaBase
 				$sql .= " and lastvisit >= '$r1'";
 			if($r2)
 				$sql .= " and lastvisit <= '$r2'";
-		}
-
-		if(isset($filter->vehicle) and count($filter->vehicle) > 0) {
-			$sql .= " and make in (";
-			foreach($filter->vehicle as $make) {
-				$sql .= "'$make',";
-			}
-			$sql .= "'')";
 		}
 
 		if(isset($filter->mileage) and count($filter->mileage) == 2) {
@@ -70,25 +78,10 @@ abstract class CriteriaBase
 				$sql .= " and mileage <= $m2";
 		}
 
-		if(isset($filter->custloyalty) and count($filter->custloyalty) > 0) {
-			$sql .= " and loyaltyprogram in (";
-			foreach($filter->custloyalty as $prog) {
-				$sql .= "'$prog',";
-			}
-			$sql .= "'')";
-		}
-
-		if(isset($filter->gender) and count($filter->gender) > 0) {
-			$sql .= " and gender in (";
-			foreach($filter->gender as $gender) {
-				$sql .= "'$gender',";
-			}
-			$sql .= "'')";
-		}
-
 		return "$sql;";
 	}
 
+	// Start the build chain (fluent interface design pattern)
 	protected function build($title, $description) {
 		$this->spec->title = $title;
 		$this->spec->description = $description;

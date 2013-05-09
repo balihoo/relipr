@@ -10,18 +10,17 @@ use Tonic\Resource,
  * @uri /console
  * @uri /
  */
-class Consoloe extends BasicResource{
+class Console extends BasicResource{
 
 	/**
-	 * Produce a console
+	 * Produce a management console with some links and buttons
 	 * @method GET
 	 * @auth
 	 */
 	public function get(){
+		// Get a view and populate it with model data
 		$view = $this->getView('index');
 
-		$check = array();
-		
 		// Check to see if sqlite3 is running on this machine
 		$lastLine = exec('which sqlite3', $output, $return);
 		$view->check['sqlite3 is available on command line'] = $lastLine != '' && $return == 0;
@@ -47,7 +46,6 @@ class Consoloe extends BasicResource{
 			$view->check['PHP SQLLite3 support'] = false;
 		}
 
-		
 		$view->render();
 	}
 

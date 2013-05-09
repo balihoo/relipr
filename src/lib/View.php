@@ -1,10 +1,15 @@
 <?php
+/* The View class is used to render HTML pages.
+ You can render either a .php file or a .md file
+ See /src/resource/Console.php to see how this is used
+*/
 
 class View
 {
 	private $viewType;
 	private $viewPath;
 
+	//The view will use either a .php or .md file in src/view/ directory
 	public function __construct($viewName) {
 		$viewDir = realpath('../src/view/');
 		if(file_exists("$viewDir/$viewName.php")) {
@@ -18,6 +23,7 @@ class View
 		}
 	}
 
+	// Render the view
 	public function render() {
 		switch($this->viewType) {
 			case 'php': return $this->renderPhp();

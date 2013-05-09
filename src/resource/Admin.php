@@ -1,5 +1,9 @@
 <?php
 
+/*
+	The admin console will invoke this resource to run administrative tasks
+*/
+
 require_once('BasicResource.php');
 
 use Tonic\Resource,
@@ -25,11 +29,14 @@ class Admin extends BasicResource{
 		}
 	}
 
+	// Pull down the raw csv file used to populate the sample database
+	// This pulls the data from the given path and puts it in the data directory
 	private function refreshSourceData($path) {
 		file_put_contents('../data/sample.csv', file_get_contents($path));
 		return new Response(Response::CREATED, "Source data synchronization from $path complete.");
 	}
 
+	// Reload the database from scratch
 	private function refreshDatabase() {
 		try {
 			$message = $this->db->refreshDatabase();

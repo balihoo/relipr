@@ -1,5 +1,7 @@
 <?php
 
+/* This class provides access to the sqlite database */
+
 require_once 'ListDTO.php';
 
 use Tonic\Response,

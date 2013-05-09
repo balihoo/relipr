@@ -1,4 +1,8 @@
 <?php
+/*
+	Implement a really simple criteria specification for a new movers list
+	TODO: Add a rooftop radius criterion
+*/
 
 class directmail_acme_newmovers extends CriteriaBase
 {

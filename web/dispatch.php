@@ -1,20 +1,12 @@
 <?php
+/* This script acts as the main entry point for all application endpoints.
+	We are using the open source Tonic library to implement REST in PHP.
+	For more info on Tonic see: https://github.com/peej/tonic
 
-// This is some seriously ghetto security while I'm developing...
-// It's called IP address white labeling (and no, it is not racist)
-if(isset($_SERVR)) {
-	$accessList = array('192.168.1.1', '127.0.0.1');
-	if(!in_array($_SERVER['REMOTE_ADDR'], $accessList)) {
-		header("HTTP/1.0 403 Forbidden");
-		echo "<h1>Access Verboten</h1>";
-		echo $_SERVER['REMOTE_ADDR'];
-		exit;
-	}
-}
+	The .htaccess file uses mod rewrite to direct all non-static traffic to this dispatcher
+*/
 
-// Load the composer autoload script
-// This will give me access to all the classes I need, especially tonic!
-
+// Set up the include paths to make including dependencies a little easier
 $basePath = realpath(dirname(__FILE__) . "/../src/");
 set_include_path(
 	get_include_path() . PATH_SEPARATOR . 
@@ -23,8 +15,10 @@ set_include_path(
 	$basePath . "/lib/Tonic"
 );
 
+// Include the Tonic autoloader
 require_once 'Autoloader.php';
 
+// Configure Tonic, tell it which files to scan for resource definitions
 $config = array(
     'load' => array(
         '../src/resource/*.php', // load example resources
@@ -37,6 +31,7 @@ $request = new Tonic\Request();
 
 // Handle tonic exceptions by responding appropriately
 try {
+	// Get and execute the appropriate resource object
 	$resource = $app->getResource($request);
 	$response = $resource->exec();
 } catch (Tonic\NotFoundException $e) {

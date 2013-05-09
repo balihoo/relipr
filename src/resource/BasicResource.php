@@ -26,11 +26,13 @@ abstract class BasicResource extends Resource {
 		parent::__construct($app, $request, $urlParams);
 	}
 	
+	// BasicResource methods annotated with @auth will require basic auth
 	protected function auth()
 	{
 		$this->before(array($this, 'runBasicAuth'));
 	}
 
+	// Basic HTTP authentication
 	protected function runBasicAuth($request, $methodName)
 	{
 		// Make sure that the browser is sending basic auth
@@ -39,11 +41,13 @@ abstract class BasicResource extends Resource {
 			throw new UnauthorizedException;
 	}
 
+	// BasicResource methods annotated with @valid will invoke runValidation
 	protected function valid()
 	{
 		$this->before(array($this, 'runValidation'));
 	}
 
+	// This method ensures that some of the commonly used parameters are valid
 	protected function runValidation($request, $methodName)
 	{
 		// If the medium parameter is set, make sure that it is a valid one
@@ -76,12 +80,14 @@ abstract class BasicResource extends Resource {
 		$this->after(array($this, 'formatJSON'));
 	}
 
+	// Formate the response by encoding the response body with nicely formatted JSON
 	protected function formatJSON($response) {
 	  $response->contentType = "application/json";
 		$response->body = $this->indent(json_encode($response->body));
 	}
 
 	// Set up a magical getter for the db connections
+	// This is so that subclasses can simply say $this->db->method()
 	public function __get($name) {
 		if($name == 'db') {
 			return DB::getInstance();
@@ -90,7 +96,7 @@ abstract class BasicResource extends Resource {
 		return parent::__get($name);
 	}
 
-	// Render a page
+	// Render a view page instead of returning a Tonic\Response
 	protected function getView($page) {
 		require_once('View.php');
 		return new View($page);

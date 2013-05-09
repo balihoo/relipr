@@ -1,5 +1,10 @@
 <?php
 
+/* This class implements a resource endpoint for invoking background processes.
+	Because these are exposed as REST resources, it is very easy to
+	invoke them from cron using cUrl.
+*/
+
 require_once('BasicResource.php');
 
 use Tonic\Resource,
@@ -18,6 +23,7 @@ class Jobs extends BasicResource{
 	 * @json
 	 */
 	public function dispatch($jobname){
+		// Determine which action to take base on the provided job name
 		switch($jobname) {
 			case 'callback': return $this->executeCallbacks();
 			case 'count': return $this->executeCounts();
@@ -67,6 +73,8 @@ class Jobs extends BasicResource{
 		return new Response(Response::OK , $result);
 	}
 
+	// Run any pending callbacks, sending a POST to the registered
+	// callback url for each list
 	private function executeCallback(ListDTO $list, $event) {
 		// Keep track of the results of this callback
 		$detail = array('listid' => $list->listid, 'event' => $event);
