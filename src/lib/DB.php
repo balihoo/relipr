@@ -119,6 +119,25 @@ class DB {
 		}
 	}
 
+	// TODO: only select the specified columns
+	public function pullList($list, $fname) {
+		$criteriaObject = CriteriaBuilder::getCriteriaObject($list->medium, $list->brandkey, $list->criteriaid);
+		$sql = "select * " . $criteriaObject->buildQuery($list->filter);
+		$result = $this->db->query($sql);
+
+		$fp = fopen($fname, 'w');
+
+		$hasHeaders = false;
+		while($row = $result->fetchArray(SQLITE3_ASSOC)) {
+			if(!$hasHeaders) {
+				fputcsv($fp, array_keys($row));
+				$hasHeaders = true;
+			}
+			fputcsv($fp, array_values($row));
+		}
+		fclose($fp);
+	}
+
 	public function cancelList($list) {
 		// Idempotence: if already canceled then do nothing
 		if($list->status == ListDTO::STATUS_CANCELED)

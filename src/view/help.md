@@ -132,6 +132,7 @@ The following actions are not normally invoked via the API, but are triggered ev
 
 Download a Prepared List
 ------------------------
+<a href="/medium/directmail/brand/oscorp/criteria/carcare/list/0/download" target="_blank">/medium/directmail/brand/oscorp/criteria/carcare/list/0/download</a><br/>
 
 Updating Recipient Specific Results
 -----------------------------------

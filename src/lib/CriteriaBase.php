@@ -37,6 +37,7 @@ abstract class CriteriaBase
 		}
 	}
 
+	// TODO: Add orderinfo, affilateinfo & creativeinfo to buildQuery method
 	public function buildQuery($filter) {
 		$sql = "from recipient where";
 		$sql .= " brandkey = '{$this->brandkey}'";
