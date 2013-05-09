@@ -58,12 +58,22 @@ Create a New List
 
 	filter<br/>
 	<textarea name="filter" cols="40" rows="9">{
- "affiliates": [75],
+ "affiliates": ["75"],
  "visitedrange": ["2012-03-01", null],
  "vehicle": ["Ford", "Chevrolet", "Toyota"],
  "mileage": [null, 150000],
  "custloyalty": ["Oil Change", "Oil Change+"]
 }</textarea><br/><br/>
+
+	orderinfo<br/>
+	<textarea name="orderinfo" cols="40" rows="1">{"OrderID":10,"StartDate":"2016-12-25"}</textarea><br/><br/>
+
+	affiliateinfo<br/>
+	<textarea name="affiliateinfo" cols="40" rows="2">{"AffiliateNumber":"75",
+"State":"DC","City":"Washington"}</textarea><br/><br/>
+
+	creativeinfo<br/>
+	<textarea name="creativeinfo" cols="40" rows="1">{"bgimage":"water","price":"$10.95"}</textarea><br/><br/>
 
 	requestedcount<br/> <input type="text" name="requestedcount" value="100" size="6"/><br/>
 

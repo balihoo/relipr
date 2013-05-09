@@ -55,7 +55,7 @@ SQL;
 					'value' => $make,
 					'title' => $make,
 					'criteria' => array(
-						'criterionid' => 'models',
+						'criterionid' => 'model',
 						'type' => 'selectMany',
 						'title' => 'Model',
 						'options' => array(),

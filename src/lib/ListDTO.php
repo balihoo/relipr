@@ -19,6 +19,9 @@ class ListDTO
 		$cost,
 		$callback,
 		$filter,
+		$orderinfo,
+		$affiliateinfo,
+		$creativeinfo,
 		$columns,
 		$links;
 
@@ -44,6 +47,9 @@ class ListDTO
 		$list->status = $arr['status'];
 		$list->callback = $arr['callback'];
 		$list->setFilter($arr['filter']);
+		$list->setCreativeInfo($arr['creativeinfo']);
+		$list->setOrderInfo($arr['orderinfo']);
+		$list->setAffiliateInfo($arr['affiliateinfo']);
 		$list->setColumns($arr['columns']);
 		$list->updateLinks();
 
@@ -95,19 +101,20 @@ class ListDTO
 		}
 	}
 
-	public function setFilter($filter) {
-		$this->filter = self::decodeFilter($filter);
+	public function setFilter($filter) { $this->filter = self::decodeObject($filter); }
+	public function setAffiliateInfo($info) { $this->affiliateinfo = self::decodeObject($info); }
+	public function setCreativeInfo($info) { $this->creativeinfo = self::decodeObject($info); }
+	public function setOrderInfo($info) { $this->orderinfo = self::decodeObject($info); }
+
+	public function encodeObject($object) {
+		return json_encode($object);
 	}
 
-	public function encodeFilter($filter) {
-		return json_encode($filter);
-	}
-
-	public static function decodeFilter($filter) {
-		$filter = json_decode($filter);
-		if($filter === NULL && json_last_error() != JSON_ERROR_NONE)
-			throw new Exception("Unable to decode 'filter': " . self::getJsonErrorMessage(json_last_error()), 400);
-		return $filter;
+	public static function decodeObject($string) {
+		$object = json_decode($string);
+		if($object === NULL && json_last_error() != JSON_ERROR_NONE)
+			throw new Exception("Unable to decode JSON string: " . self::getJsonErrorMessage(json_last_error()), 400);
+		return $object;
 	}
 
 	public function setColumns($columns) {

@@ -35,10 +35,34 @@ class ListResource extends BasicResource{
 		if(!isset($_POST['callback']) || trim($_POST['callback']) == '')
 			return new Response(Response::BADREQUEST, "Missing or empty 'callback'");
 
+		$orderinfo = (!isset($_POST['orderinfo']) || trim($_POST['orderinfo']) == '')
+			? '[]' : $_POST['orderinfo'];
+		$creativeinfo = (!isset($_POST['creativeinfo']) || trim($_POST['creativeinfo']) == '')
+			? '[]' : $_POST['creativeinfo'];
+		$affiliateinfo = (!isset($_POST['affiliateinfo']) || trim($_POST['affiliateinfo']) == '')
+			? '[]' : $_POST['affiliateinfo'];
+
+		$listArray = array(
+			'listid' => null,
+			'count' => null,
+			'brandkey' => $this->brandkey,
+			'criteriaid' => $this->criteriaid,
+			'medium' => $this->medium,
+			'requestedcount' => $_POST['requestedcount'],
+			'isestimate' => null,
+			'cost' => null,
+			'status' => ListDTO::STATUS_NEW,
+			'callback' => $_POST['callback'],
+			'filter' => $_POST['filter'],
+			'orderinfo' => $orderinfo,
+			'creativeinfo' => $creativeinfo,
+			'affiliateinfo' => $affiliateinfo,
+			'columns' => $_POST['columns'],
+		);
 
 		try {
-			$list = $this->db->createList($_POST['filter'], $this->medium, $this->brandkey, $this->criteriaid,
-				$_POST['columns'], $_POST['requestedcount'], $_POST['callback']);
+			$list = ListDTO::fromArray($listArray, false);
+			$this->db->saveList($list);
 			return new Response(Response::CREATED, $list);
 		} catch (Exception $ex) {
 			return new Response($ex->getCode(), $ex->getMessage());

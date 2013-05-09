@@ -143,35 +143,15 @@ class DB {
 		return "select count(*) " . $criteriaObject->buildQuery($filter);
 	}
 
-	// Create a new list object
-	public function createList($filter, $medium, $brandkey, $criteriaid, $columns, $requestedcount, $callback) {
-		$list = ListDTO::fromArray(array(
-			'listid' => null,
-			'count' => null,
-			'brandkey' => $brandkey,
-			'criteriaid' => $criteriaid,
-			'medium' => $medium,
-			'requestedcount' => $requestedcount,
-			'isestimate' => null,
-			'cost' => null,
-			'status' => ListDTO::STATUS_NEW,
-			'callback' => $callback,
-			'filter' => $filter,
-			'columns' => $columns,
-		), false);
-		$this->saveList($list);
-		return $list;
-	}
-
 	public function saveList($list, $updates = null) {
 		if($list->listid === null) {
 			// Prepare the insert statement
 			$stmt = $this->db->prepare("
 			insert into list(
-				medium, brandkey, criteriaid, filter, requestedcount,
+				medium, brandkey, criteriaid, filter, orderinfo, affiliateinfo, creativeinfo, requestedcount,
 				count, status, columns, callback, isestimate, cost, inserted, cancelnotified, readied)
 			values(
-				:medium, :brandkey, :criteriaid, :filter, :requestedcount,
+				:medium, :brandkey, :criteriaid, :filter, :orderinfo, :affiliateinfo, :creativeinfo, :requestedcount,
 				:count, :status, :columns, :callback, :isestimate, :cost, datetime(), null, null);
 			");
 		} else {
@@ -184,6 +164,9 @@ class DB {
 				brandkey = :brandkey,
 				criteriaid = :criteriaid,
 				filter = :filter,
+				orderinfo = :orderinfo,
+				affiliateinfo = :affiliateinfo,
+				creativeinfo = :creativeinfo,
 				requestedcount = :requestedcount,
 				count = :count,
 				status = :status,
@@ -200,7 +183,10 @@ class DB {
 		$stmt->bindValue(':medium', $list->medium, SQLITE3_TEXT);
 		$stmt->bindValue(':brandkey', $list->brandkey, SQLITE3_TEXT);
 		$stmt->bindValue(':criteriaid', $list->criteriaid, SQLITE3_TEXT);
-		$stmt->bindValue(':filter', ListDTO::encodeFilter($list->filter), SQLITE3_TEXT);
+		$stmt->bindValue(':filter', ListDTO::encodeObject($list->filter), SQLITE3_TEXT);
+		$stmt->bindValue(':orderinfo', ListDTO::encodeObject($list->orderinfo), SQLITE3_TEXT);
+		$stmt->bindValue(':affiliateinfo', ListDTO::encodeObject($list->affiliateinfo), SQLITE3_TEXT);
+		$stmt->bindValue(':creativeinfo', ListDTO::encodeObject($list->creativeinfo), SQLITE3_TEXT);
 		$stmt->bindValue(':requestedcount', $list->requestedcount, SQLITE3_INTEGER);
 		$stmt->bindValue(':count', $list->count, SQLITE3_INTEGER);
 		$stmt->bindValue(':status', $list->status, SQLITE3_TEXT);
