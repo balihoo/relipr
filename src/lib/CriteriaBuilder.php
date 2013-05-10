@@ -69,51 +69,90 @@ class CriteriaSpec extends CriteriaList
 class CriteriaList
 {
 	public $criteria = array();
+	private $top = null;
 
-	public function addSection($title) {
-		$section = new CriteriaSection($title);
+	// Create a convenience method for setting arbitrary criterion attributes
+	public function __call($fname, $args) {
+		if($this->top == null) {
+			// Puke if a criterion isn't already set
+			throw new Exception("Criteriabuilder: Trying to call method $fname on a non-object");
+		} else if(preg_match('/^set([a-z]+)$/', $fname, $matches)) {
+			// Only handle methods that start with the name set...
+			$fname = $matches[1];
+			if(property_exists($this->top, $fname)) {
+				if(count($args) != 1) {
+					// Setter methods expect exactly one parameter
+					error_log("WARN CriteriaBuilder: Expected exactly one arg when calling $fname of " . get_class($this->top));
+				} else {
+					// Let's actually set the desired property on the criterion object
+					$this->top->$fname = $args[0];
+				}
+			} else {
+				// Log a warning if this class doesn't have the desired property
+				error_log("WARN CriteriaBuilder: Property $fname not found in class " . get_class($this->top));
+			}
+		} else {
+			// Puke if a method other than setxxx is is called
+			throw new Exception("Criteriabuilder: Method $fname of class " . get_class($this->top) . " does not exist");
+		}
+		return $this;
+	}
+
+	public function startSection($title) {
+		$this->top = null;
+		$section = new CriteriaSection($title, $this);
 		$this->criteria[] = $section;
 		return $section;
 	}
 
 	public function addMultiSelect($criterionid, $title, $options, $description = null) {
-		$multi = new CriterionMultiSelect($criterionid, $title, $description);
-		$multi->setOptions($options);
-		$this->criteria[] = $multi;
+		$this->top = new CriterionMultiSelect($criterionid, $title, $description);
+		$this->top->setOptions($options);
+		$this->criteria[] = $this->top;
 		return $this;
 	}
 
 	public function addSelect($criterionid, $title, $options, $description = null) {
-		$select = new CriterionSelect($criterionid, $title, $description);
-		$select->setOptions($options);
-		$this->criteria[] = $select;
+		$this->top = new CriterionSelect($criterionid, $title, $description);
+		$this->top->setOptions($options);
+		$this->criteria[] = $this->top;
 		return $this;
 	}
 
 	public function addNested($criterionid, $title, $options, $description = null) {
-		$select = new CriterionNested($criterionid, $title, $description);
-		$select->setOptions($options);
-		$this->criteria[] = $select;
+		$this->top = new CriterionNested($criterionid, $title, $description);
+		$this->top->setOptions($options);
+		$this->criteria[] = $this->top;
 		return $this;
 	}
 
 	public function addDateRange($criterionid, $title, $description = null) {
-		$this->criteria[] = new CriterionDateRange($criterionid, $title, $description);
+		$this->top = new CriterionDateRange($criterionid, $title, $description);
+		$this->criteria[] = $this->top;
+		return $this;
+	}
+
+	public function addDate($criterionid, $title, $description = null) {
+		$this->top = new CriterionDate($criterionid, $title, $description);
+		$this->criteria[] = $this->top;
 		return $this;
 	}
 
 	public function addRange($criterionid, $title, $description = null) {
-		$this->criteria[] = new CriterionRange($criterionid, $title, $description);
+		$this->top = new CriterionRange($criterionid, $title, $description);
+		$this->criteria[] = $this->top;
 		return $this;
 	}
 
+	// TODO: turn this into a real object
 	public function addOption($criterionid, $title, $option) {
-		$this->criteria[] = array(
+		$this->top = array(
 			'criterionid' => $criterionid,
 			'type' => 'option',
 			'title' => '',
 			'option' => array('value' => $option, 'title' => $title)
 		);
+		$this->criteria[] = $this->top;
 		return $this;
 	}
 
@@ -122,11 +161,17 @@ class CriteriaList
 class CriteriaSection extends CriteriaList
 {
 	public $type = 'section';
-	public $title;
-	public $criteria;
+	public $title = '';
+	public $criteria = array();
+	private $parent = null;
 
-	public function __construct($title) {
+	public function __construct($title, $parent) {
 		$this->title = $title;
+		$this->parent = $parent;
+	}
+
+	public function endSection() {
+		return $this->parent;
 	}
 }
 
@@ -134,8 +179,8 @@ abstract class Criterion
 {
 	public $criterionid;
 	public $type = null;
-	public $helpText = "", $description = "", $title = "",
-		$defaultvalue = null, $editable = false, $hidden = false;
+	public $helptext = "", $description = "", $title = "",
+		$defaultvalue = null, $editable = true, $hidden = false, $required = false;
 
 	public function __construct ($criterionid, $title, $description = null) {
 		$this->criterionid = $criterionid;
@@ -149,7 +194,7 @@ abstract class Criterion
 class CriterionSelect extends Criterion
 {
 	public $type = 'selectsingle';
-	public $options = array();
+	public $options = array(), $defaultvalue;
 
 	public function setOptions($options) {
 		$this->options = $options;
@@ -159,7 +204,7 @@ class CriterionSelect extends Criterion
 class CriterionMultiSelect extends CriterionSelect
 {
 	public $type = 'selectmultiple';
-	public $maxselections = null;
+	public $maxselections = null, $minselections = 1;
 }
 
 class CriterionNested extends CriterionSelect
@@ -175,11 +220,12 @@ class CriterionRange extends Criterion
 class CriterionDate extends Criterion
 {
 	public $type = 'date';
-	public $mindate = null, $maxdate = null;
+	public $mindate = null, $maxdate = null, $defaultvalue = null;
 }
 
 class CriterionDateRange extends CriterionDate
 {
 	public $type = 'daterange';
+	public $defaultmindate = null, $defaultmaxdate = null;
 }
 
