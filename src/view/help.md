@@ -4,6 +4,8 @@ This document will walk you through a handful of examples that demonstrate how t
 
 This document assumes that the reader already has a full understanding of [Balihoo List Integration](https://docs.google.com/document/d/1QSqS5QpAx4wG7__ZQaLScTmpd-IqiEBJD0Mth9926Wg/edit?usp=sharing "Baliho List Integration"). The source code for this documentation and reference implementation can be found on [github](https://github.com/pauldprice/relipr "Source Code").
 
+To test the example criteria or other criteria please visit the [sandbox criteria utility](http://balihoo-test.s3.amazonaws.com/devSwfs/sandbox.swf "Sandbox Utility")
+
 Definitions
 -----------
  - **Recipient List**: A list of customers or prospects to be used in a direct marketing campaign. Throughout this documentation this will be referred to simply as a _list_.
@@ -32,6 +34,7 @@ To retrieve an individual criteria specification, append the `critieriaid` to th
 <a href="medium/directmail/brand/acme/criteria/newmovers" target="if2">medium/directmail/brand/acme/criteria/newmovers</a>
 <a href="medium/directmail/brand/oscorp/criteria/carcare" target="if2">medium/directmail/brand/oscorp/criteria/carcare</a>
 <a href="medium/directmail/brand/oscorp/criteria/demo" target="if2">medium/directmail/brand/oscorp/criteria/demo</a>
+<a href="medium/email/brand/choam/criteria/everything" target="if2">medium/email/brand/choam/criteria/everything</a>
 <iframe name="if2" src="about:blank"></iframe>
 
 * * *

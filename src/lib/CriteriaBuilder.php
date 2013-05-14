@@ -70,6 +70,11 @@ class CriteriaList
 {
 	public $criteria = array();
 	private $top = null;
+	protected $parent = null;
+
+	public function __construct($parent = null) {
+		$this->parent = $parent;
+	}
 
 	// Create a convenience method for setting arbitrary criterion attributes
 	public function __call($fname, $args) {
@@ -96,6 +101,10 @@ class CriteriaList
 			throw new Exception("Criteriabuilder: Method $fname of class " . get_class($this->top) . " does not exist");
 		}
 		return $this;
+	}
+
+	public function getTop() {
+		return $this->top;
 	}
 
 	public function startSection($title) {
@@ -126,6 +135,20 @@ class CriteriaList
 		return $this;
 	}
 
+	public function startNested($criterionid, $title, $description = null) {
+		$this->top = new CriterionNested($criterionid, $title, $description);
+		$this->criteria[] = $this->top;
+		return new CriteriaNestedHelper($this);
+	}
+
+	public function nextOption($title) {
+		return $this->parent->nextOption($title, $this);
+	}
+
+	public function endNested() {
+		return $this->parent->endNested($this);
+	}
+
 	public function addDateRange($criterionid, $title, $description = null) {
 		$this->top = new CriterionDateRange($criterionid, $title, $description);
 		$this->criteria[] = $this->top;
@@ -138,8 +161,8 @@ class CriteriaList
 		return $this;
 	}
 
-	public function addRange($criterionid, $title, $description = null) {
-		$this->top = new CriterionRange($criterionid, $title, $description);
+	public function addNumberRange($criterionid, $title, $description = null) {
+		$this->top = new CriterionNumberRange($criterionid, $title, $description);
 		$this->criteria[] = $this->top;
 		return $this;
 	}
@@ -163,7 +186,6 @@ class CriteriaSection extends CriteriaList
 	public $type = 'section';
 	public $title = '';
 	public $criteria = array();
-	private $parent = null;
 
 	public function __construct($title, $parent) {
 		$this->title = $title;
@@ -171,6 +193,36 @@ class CriteriaSection extends CriteriaList
 	}
 
 	public function endSection() {
+		return $this->parent;
+	}
+}
+
+class CriteriaNestedHelper
+{
+	public $title;
+	public $parent;
+
+	public function __construct($parent) {
+		$this->parent = $parent;
+	}
+
+	public function nextOption($title, $previousList = null) {
+		if($previousList != null)
+			$this->setOptions($previousList);
+
+		$this->title = $title;
+		return new CriteriaList($this);
+	}
+
+	private function setOptions($criteriaList) {
+		$this->parent->getTop()->options[] = array(
+			'title' => $this->title,
+			'criteria' => $criteriaList->criteria
+		);
+	}
+
+	public function endNested($criteriaList) {
+		$this->setOptions($criteriaList);
 		return $this->parent;
 	}
 }
@@ -201,20 +253,26 @@ class CriterionSelect extends Criterion
 	}
 }
 
+class CriterionNested extends CriterionSelect
+{
+	public $type = 'nestedsingle';
+}
+
 class CriterionMultiSelect extends CriterionSelect
 {
 	public $type = 'selectmultiple';
-	public $maxselections = null, $minselections = 1;
+	public $maxselections = null, $minselections = 0;
 }
 
-class CriterionNested extends CriterionSelect
+class CriterionNumberRange extends Criterion
 {
-	public $type = 'nested';
-}
-
-class CriterionRange extends Criterion
-{
-	public $type = 'range';
+	public $type = 'numberrange';
+	public $integer = true;
+	public $min = -1000000;
+	public $max = 1000000;
+	public $unit = "";
+	public $defaultminlabel = "Unlimited";
+	public $defaultmaxlabel = "Unlimited";
 }
 
 class CriterionDate extends Criterion

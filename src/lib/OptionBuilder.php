@@ -56,7 +56,7 @@ SQL;
 					'title' => $make,
 					'criteria' => array(
 						'criterionid' => 'model',
-						'type' => 'selectMany',
+						'type' => 'selectsingle',
 						'title' => 'Model',
 						'options' => array(),
 					));
@@ -77,13 +77,13 @@ SQL;
 					array(
 						'criterionid' => 'make',
 						'title' => 'Make',
-						'type' => 'nestedSelect',
+						'type' => 'selectmultiplesubitem',
 						'options' => $options
 					),
 					array(
 						'criterionid' => 'year',
 						'title' => 'Year(s)',
-						'type' => 'selectMany',
+						'type' => 'selectmultiple',
 						'options' => $years
 					)
 				),
