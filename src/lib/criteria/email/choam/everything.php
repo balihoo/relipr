@@ -28,7 +28,8 @@ class email_choam_everything extends CriteriaBase
 				->nextOption('By Job Title')
 					->addMultiSelect('title', 'Choose Job Titles', array(
 						'Media Planner', 'Loan Officer', 'Line Manager', 'Business Analyst'))
-					->addOption('supervisor', 'Only send to supervisors and managers', true)
+					->addMultiSelect('supervisor', '', array('Only send to supervisors and managers'))
+						->setminselections(0)
 
 			->endNested()
 
