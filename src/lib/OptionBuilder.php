@@ -58,7 +58,7 @@ SQL;
 						'criterionid' => 'model',
 						'type' => 'selectsingle',
 						'title' => 'Model',
-						'options' => array(),
+						'options' => array('Any'),
 					));
 				$lastMake = $make;
 			}

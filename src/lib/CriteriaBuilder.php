@@ -161,20 +161,14 @@ class CriteriaList
 		return $this;
 	}
 
-	public function addNumberRange($criterionid, $title, $description = null) {
-		$this->top = new CriterionNumberRange($criterionid, $title, $description);
+	public function addNumber($criterionid, $title, $description = null) {
+		$this->top = new CriterionNumber($criterionid, $title, $description);
 		$this->criteria[] = $this->top;
 		return $this;
 	}
 
-	// TODO: turn this into a real object
-	public function addOption($criterionid, $title, $option) {
-		$this->top = array(
-			'criterionid' => $criterionid,
-			'type' => 'option',
-			'title' => '',
-			'option' => array('value' => $option, 'title' => $title)
-		);
+	public function addNumberRange($criterionid, $title, $description = null) {
+		$this->top = new CriterionNumberRange($criterionid, $title, $description);
 		$this->criteria[] = $this->top;
 		return $this;
 	}
@@ -273,6 +267,12 @@ class CriterionNumberRange extends Criterion
 	public $unit = "";
 	public $defaultminlabel = "Unlimited";
 	public $defaultmaxlabel = "Unlimited";
+}
+
+class criterionNumber extends Criterion
+{
+	public $type = 'number';
+	public $integer = true, $min = null, $max = null, $unit = '';
 }
 
 class CriterionDate extends Criterion

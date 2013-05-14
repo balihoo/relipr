@@ -40,7 +40,14 @@ class email_choam_everything extends CriteriaBase
 				->AddSelect('customertype', 'Customer Class', array(
 					'Big Spender', 'Average', 'Cheapskate', 'Thief'))
 			->endSection()
-			->addOption('jelly', 'Jelly-of-the-month members only', true)
+			->addMultiSelect('jelly', '', array ('Jelly-of-the-month members only'))
+			->addNested('vehicles', 'Vehicles', OptionBuilder::vehicles($this->brandkey, $this->affiliatenumber),
+					'Choose the vehicles, makes and models, etc')
+			->addNumber('minpets', 'Pets', 'Target recipients with at least')
+				->setunit('Pet(s)')->setdefaultvalue(1)->setmin(0)
+			->addNumberRange('age', 'Age', 'Select the age range you want to target')
+				->setinteger(true)->setmin(18)->setmax(200)->setunit('years of age')
+				->setdefaultminlabel(18)->setdefaultmaxlabel('Super old')
 		;
 
 	}
