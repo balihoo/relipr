@@ -37,8 +37,9 @@ class ListResource extends BasicResource{
 			return new Response(Response::BADREQUEST, "Missing or empty 'requestedcount'");
 
 		// Get the callback url
-		if(!isset($_POST['callback']) || trim($_POST['callback']) == '')
-			return new Response(Response::BADREQUEST, "Missing or empty 'callback'");
+		$callback = null;
+		if(isset($_POST['callback']) && trim($_POST['callback']) != '')
+			$callback = trim($POST['callback']);
 
 		// Pull out the order, creative and affiliate info
 		$orderinfo = (!isset($_POST['orderinfo']) || trim($_POST['orderinfo']) == '')
