@@ -104,9 +104,13 @@ class DB {
 		return $list;
 	}
 
-	public function countList($list) {
+	public function getListCount($list) {
 		$countQuery = $this->getCountQuery($list->filter, $list->medium, $list->brandkey, $list->criteriaid);
-		$list->count = $this->db->querySingle($countQuery);
+		return $this->db->querySingle($countQuery);
+	}
+
+	public function countList($list) {
+		$list->count = $this->getListCount($list);
 		$list->isestimate = false;
 		$list->cost = $list->count * 0.05;
 

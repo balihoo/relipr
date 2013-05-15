@@ -6,7 +6,8 @@
 
 require_once('BasicResource.php');
 
-use Tonic\Response;
+use Tonic\Response,
+		Tonic\NotFoundException;
 
 /**
  * @uri /medium/:medium/brand/:brandkey/criteria/:criteriaid/list/:listid/:command
@@ -41,6 +42,7 @@ class ListAction extends BasicResource{
 		// Determine which action to take based on the :command parameter in the URL
 		switch($this->command) {
 			case 'download': return $this->downloadList();
+			case 'count': return $this->countList();
 			default:
 				throw new NotFoundException("List action '{$this->command}' not found");
 		}
@@ -80,6 +82,13 @@ class ListAction extends BasicResource{
 		readfile($filePath);
 		exit;
 	}
+
+	// Return a list count
+	private function countList() {
+		$list = $this->db->getList($this->medium, $this->brandkey, $this->criteriaid, $this->listid);
+		return new Response(Response::OK, $this->db->getListCount($list));
+	}
+
 
 }
 
