@@ -42,7 +42,7 @@ class ListDTO
 		$list->criteriaid = $arr['criteriaid'];
 		$list->medium = $arr['medium'];
 		$list->requestedcount = $arr['requestedcount'];
-		$list->isestimate = $arr['isestimate'];
+		$list->isestimate = $arr['isestimate'] == 1;
 		$list->cost = $arr['cost'];
 		$list->status = $arr['status'];
 		$list->callback = $arr['callback'];
