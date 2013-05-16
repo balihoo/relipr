@@ -39,7 +39,7 @@ class ListResource extends BasicResource{
 		// Get the callback url
 		$callback = null;
 		if(isset($_POST['callback']) && trim($_POST['callback']) != '')
-			$callback = trim($POST['callback']);
+			$callback = trim($_POST['callback']);
 
 		// Pull out the order, creative and affiliate info
 		$orderinfo = (!isset($_POST['orderinfo']) || trim($_POST['orderinfo']) == '')
@@ -60,7 +60,7 @@ class ListResource extends BasicResource{
 			'isestimate' => null,
 			'cost' => null,
 			'status' => ListDTO::STATUS_NEW,
-			'callback' => $_POST['callback'],
+			'callback' => $callback,
 			'filter' => $_POST['filter'],
 			'orderinfo' => $orderinfo,
 			'creativeinfo' => $creativeinfo,
