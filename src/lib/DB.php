@@ -128,7 +128,9 @@ class DB {
 	// TODO: only select the specified columns
 	public function pullList($list, $fname) {
 		$criteriaObject = CriteriaBuilder::getCriteriaObject($list->medium, $list->brandkey, $list->criteriaid);
-		$sql = "select * " . $criteriaObject->buildQuery($list->filter);
+		$spec = $criteriaObject->getCriteriaSpec();
+		$columns = implode(',', array_keys($spec->columns));
+		$sql = "select $columns " . $criteriaObject->buildQuery($list->filter);
 		$result = $this->db->query($sql);
 
 		$fp = fopen($fname, 'w');

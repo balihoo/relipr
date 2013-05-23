@@ -18,6 +18,27 @@ abstract class CriteriaBase
 		$this->affiliatenumber= $affiliatenumber;
 
 		$this->spec = new CriteriaSpec($criteriaid, 'No title', 'No description');
+		
+		// HACK! Set the available columns for this criteria (depends on medium)
+		$this->spec->columns = array(
+			'recipientid' => 'Unique recipient identifier',
+			'affiliatenumber' => 'Affiliate that owns this recipient',
+			'firstname' => 'Recipient given name',
+			'lastname' => 'Recipient surname',
+			'gender' => 'Gender of recipient (m/f)',
+			'lastvisit' => 'Date of last visit (YYYY/MM/DD)'
+		);
+
+		if($medium == 'email') {
+			$this->spec->columns['email'] = 'Recipient email address';
+		} else {
+			$this->spec->columns['address1'] = 'Street address';
+			$this->spec->columns['address2'] = 'Address line 2';
+			$this->spec->columns['city'] = 'City';
+			$this->spec->columns['postalcode'] = 'Postal code';
+			$this->spec->columns['stateprovince'] = 'State or province code';
+			$this->spec->columns['country'] = 'Country code';
+		}
 	}
 
 	/*

@@ -58,6 +58,7 @@ class CriteriaBuilder
 class CriteriaSpec extends CriteriaList
 {
 	public $criteriaid, $title, $description;
+	public $columns;
 
 	public function __construct($criteriaid, $title, $description) {
 		$this->criteriaid = $criteriaid;

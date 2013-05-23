@@ -22,10 +22,10 @@ create table recipient(
 	emailsubscribed date,
 	emailunsubscribed date,
 	emailbounced date,
-	address varchar(50) not null,
+	address1 varchar(50) not null,
 	city varchar(30) not null,
-	state char(2) not null,
-	zip char(5) not null,
+	stateprovince char(2) not null,
+	postalcode char(5) not null,
 	movedin date,
 	phone char(12) not null,
 	mobile char(12) not null,
@@ -41,7 +41,9 @@ create table recipient(
 	haschildren integer not null,
 	catowner integer not null,
 	dogowner integer not null,
-	petowner integer not null
+	petowner integer not null,
+	address2 varchar(50) null,
+	country varchar(2) null
 );
 
 -- Add a boatload of indexes to the recipient table
@@ -56,8 +58,8 @@ create index idx_recipient_emailsubscribed on recipient(emailsubscribed);
 create index idx_recipient_emailunsubscribed on recipient(emailunsubscribed);
 create index idx_recipient_emailbounced on recipient(emailbounced);
 create index idx_recipient_city on recipient(city);
-create index idx_recipient_state on recipient(state);
-create index idx_recipient_zip on recipient(zip);
+create index idx_recipient_stateprovince on recipient(stateprovince);
+create index idx_recipient_postalcode on recipient(postalcode);
 create index idx_recipient_movedin on recipient(movedin);
 create index idx_recipient_year on recipient(year);
 create index idx_recipient_make on recipient(make);

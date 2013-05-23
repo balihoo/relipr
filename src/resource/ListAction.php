@@ -80,6 +80,7 @@ class ListAction extends BasicResource{
 		header('Content-Type: application/csv');
 		header("Content-Disposition: attachment; filename=list{$list->listid}.csv");
 		readfile($filePath);
+		unlink($filePath);
 		exit;
 	}
 
