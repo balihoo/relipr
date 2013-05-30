@@ -104,9 +104,15 @@ class DB {
 		return $list;
 	}
 
-	public function getListCount($list) {
-		$countQuery = $this->getCountQuery($list->filter, $list->medium, $list->brandkey, $list->criteriaid);
+	// Get the estimated count for a given filter and criteria
+	public function getFilterCount($filter, $medium, $brandkey, $criteriaid) {
+		$countQuery = $this->getCountQuery($filter, $medium, $brandkey, $criteriaid);
 		return $this->db->querySingle($countQuery);
+	}
+
+	// Get the estimated count for a given list
+	public function getListCount($list) {
+		return $this->getFilterCount($list->filter, $list->medium, $list->brandkey, $list->criteriaid);
 	}
 
 	public function countList($list) {
