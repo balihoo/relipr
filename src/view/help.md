@@ -54,14 +54,32 @@ In some cases the criteria and options will differ based on wether the campaign 
 
 Get the Estimated Count
 -------------------
-During the list selection process a user may be interested in determining how many recipients will match the selected criteria. The estimate resource will return a preliminary count that can be used for this purpose. Note that the `affiliates` property of the filter parameter may be left empty or set to one or more affiliate numbers. Hover over the following URLs in order to see how the filters are constructed.
+During the list selection process a user may be interested in determining how many recipients will match the selected criteria. The estimate resource will return a preliminary count that can be used for this purpose. Note that the `affiliates` property of the filter parameter may be left empty or set to one or more affiliate numbers.
 
-<a href='medium/directmail/brand/oscorp/criteria/demo/estimate?filter={}' target="ifestimate">Empty filter</a><br/>
-<a href='medium/directmail/brand/oscorp/criteria/demo/estimate?filter={"gender":["m"]}' target="ifestimate">Males only</a><br/>
-<a href='medium/directmail/brand/oscorp/criteria/demo/estimate?filter={"gender":["f"]}' target="ifestimate">Females only</a><br/>
-<a href='medium/directmail/brand/oscorp/criteria/demo/estimate?filter={"gender":["m"], "affiliates": ["75"]}' target="ifestimate">Males for affiliate 75</a><br/>
-<a href='medium/directmail/brand/oscorp/criteria/demo/estimate?filter={"gender":["m"], "affiliates": ["77"]}' target="ifestimate">Males for affiliate 77</a><br/>
-<a href='medium/directmail/brand/oscorp/criteria/demo/estimate?filter={"gender":["m"], "affiliates": ["75","77"]}' target="ifestimate">Males for affiliate 75 and 77</a>
+<form method="POST" action="medium/directmail/brand/oscorp/criteria/demo/estimate" target="ifestimate">
+	<input type="text" name="filter" value="{}" size="40"/>
+	<input type="submit" value="Empty filter"/>
+</form>
+<form method="POST" action="medium/directmail/brand/oscorp/criteria/demo/estimate" target="ifestimate">
+	<input type="text" name="filter" value='{"gender":["m"]}' size="40"/>
+	<input type="submit" value="Males only"/>
+</form>
+<form method="POST" action="medium/directmail/brand/oscorp/criteria/demo/estimate" target="ifestimate">
+	<input type="text" name="filter" value='{"gender":["f"]}' size="40"/>
+	<input type="submit" value="Females only"/>
+</form>
+<form method="POST" action="medium/directmail/brand/oscorp/criteria/demo/estimate" target="ifestimate">
+	<input type="text" name="filter" value='{"gender":["m"],"affiliates":["75"]}' size="40"/>
+	<input type="submit" value="Males for affiliate 75"/>
+</form>
+<form method="POST" action="medium/directmail/brand/oscorp/criteria/demo/estimate" target="ifestimate">
+	<input type="text" name="filter" value='{"gender":["m"],"affiliates":["77"]}' size="40"/>
+	<input type="submit" value="Males for affiliate 77"/>
+</form>
+<form method="POST" action="medium/directmail/brand/oscorp/criteria/demo/estimate" target="ifestimate">
+	<input type="text" name="filter" value='{"gender":["m"],"affiliates":["75","77"]}' size="40"/>
+	<input type="submit" value="Males for affiliates 75 &amp; 77"/>
+</form>
 <iframe name="ifestimate" src="about:blank" style="height:50px"></iframe>
 
 * * *

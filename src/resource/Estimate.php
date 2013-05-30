@@ -14,17 +14,17 @@ class Estimate extends BasicResource{
 
 	/**
 	 * Get an estimate for a given criteria and filter
-	 * @method GET
+	 * @method POST
 	 * @auth
 	 * @valid
 	 * @json
 	 */
-	public function get(){
+	public function post(){
 		// Get the criteria filter
-		if(!isset($_GET['filter']) || trim($_GET['filter']) == '')
+		if(!isset($_POST['filter']) || trim($_POST['filter']) == '')
 			return new Response(Response::BADREQUEST, "Missing or empty 'filter'");
 
-		$filter = ListDTO::decodeObject($_GET['filter']);
+		$filter = ListDTO::decodeObject($_POST['filter']);
 
 		// Try to find the list and send it back as the response
 		$count = $this->db->getFilterCount($filter, $this->medium, $this->brandkey, $this->criteriaid);
