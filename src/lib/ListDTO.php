@@ -2,7 +2,6 @@
 
 class ListDTO
 {
-	const STATUS_NEW = 'New';
 	const STATUS_SUBMITTED = 'Submitted';
 	const STATUS_CANCELED = 'Canceled';
 	const STATUS_FINALCOUNT = 'Final Count';
@@ -29,7 +28,7 @@ class ListDTO
 
 	// Set attribute defaults
 	public function __construct() {
-		$this->status = 'New';
+		$this->status = 'Submitted';
 		$this->filter = array();
 		$this->columns = array();
 	}
@@ -88,10 +87,6 @@ class ListDTO
 
 		// Add state specific links
 		switch($this->status) {
-			case ListDTO::STATUS_NEW:
-				$this->links['cancel'] = "$base/cancel";
-				$this->links['submit'] = "$base/submit";
-				break;
 			case ListDTO::STATUS_SUBMITTED:
 				$this->links['cancel'] = "$base/cancel";
 				break;

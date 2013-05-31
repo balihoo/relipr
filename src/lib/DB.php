@@ -94,16 +94,6 @@ class DB {
 		return ListDTO::fromArray($list);
 	}
 
-	public function submitList($medium, $brandkey, $criteriaid, $listid) {
-		$list = $this->getList($medium, $brandkey, $criteriaid, $listid);
-		if($list->status != ListDTO::STATUS_NEW)
-			throw new ForbiddenException("This list is in status '{$list->status}' - list cannot be submitted");
-		$list->status = ListDTO::STATUS_SUBMITTED;
-		$list->updateLinks();
-		$this->saveList($list, array('submitted = datetime()'));
-		return $list;
-	}
-
 	// Get the estimated count for a given filter and criteria
 	public function getFilterCount($filter, $medium, $brandkey, $criteriaid) {
 		$countQuery = $this->getCountQuery($filter, $medium, $brandkey, $criteriaid);
@@ -158,8 +148,7 @@ class DB {
 			return $list;
 
 		// Make sure that the list is in a cancellable status
-		if($list->status != ListDTO::STATUS_NEW
-			&& $list->status != ListDTO::STATUS_SUBMITTED)
+		if($list->status != ListDTO::STATUS_SUBMITTED)
 			throw new ForbiddenException("This list is in status '{$list->status}' - too late to cancel");
 
 		// Update the status to cancelled

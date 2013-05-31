@@ -98,8 +98,7 @@ create table status(
 );
 -- Load in all of the valid list statuses
 insert into status(status)
-select 'New' status
-union select 'Submitted'
+select 'Submitted' status
 union select 'Final Count'
 union select 'List Ready'
 union select 'Canceled'

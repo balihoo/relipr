@@ -95,7 +95,7 @@ A _list_ contains all of the information about a campaign that will enable the L
  - `filter`: The filter indicates to the list provider which criteria selections were made by the affiliate. This is a JSON object where the keys represent `criterionid`s and the values represent the user selected values.
  - `orderinfo`: Information about the order including `OrderID`, `StartDate` and other pertinent information will be passed in this JSON object (key/value pairs)
  - `affiliateinfo`: Similar to `orderinfo` this represents data known by Balihoo that are specific to the affiliate that is using this requested list in their marketing order.
- - `creativeinfo`: Another key/value JSON object that represents all of the selections that the affiliate made while customizing the creative that is going to be used in this campaign.
+ - `creativeinfo`: Another JSON object that represents all of the field and layer selections that the affiliate made while customizing the creative that is going to be used in this campaign.
  - `requestedcount`: This field indicates the _maximum_ number of recipients that the affiliate wishes to target for this campaign. If the list query results in more recipients that `requestedcount` then the list provider uses an algorithm to reduce the total list size to this requested size.
  - `callback`: The list provider will POST the list object to this URL whenever the list status changes to `Cancelled`, `Final Count` or `List Ready`.
 
@@ -139,14 +139,41 @@ A _list_ contains all of the information about a campaign that will enable the L
 }</textarea><br/><br/>
 
 	orderinfo<br/>
-	<textarea name="orderinfo" cols="40" rows="1">{"OrderID":10,"StartDate":"2016-12-25"}</textarea><br/><br/>
+	<textarea name="orderinfo" cols="40" rows="1">{"OrderID":10,"AffiliateNumber":"75","StartDate":"2016-12-25","User":"jim@example.com"}</textarea><br/><br/>
 
 	affiliateinfo<br/>
-	<textarea name="affiliateinfo" cols="40" rows="2">{"AffiliateNumber":"75",
-"State":"DC","City":"Washington"}</textarea><br/><br/>
+	<textarea name="affiliateinfo" cols="40" rows="10">{
+	"Active": true,
+	"CompanyName": "Bob's Corner Store",
+	"WebsiteURL": "www.bobscornerstore.example.com",
+	"BillingAddress":{
+		"AddressLine1":"123 Main St.",
+		"AddressLine2":"",
+		"City":"Boise",
+		"StateProvinceCode":"ID",
+		"CountryCode":"US",
+		"PostalCode":"83702",
+		"Phone":"208-555-5555",
+		"Fax":"208-555-5551",
+		"Email":"bob@example.com"
+	},
+	"Attributes":{
+		"_BusinessHours":"M-F 8-5",
+		"_Directions":"Corner of Main and Front"
+	}
+}</textarea><br/><br/>
 
 	creativeinfo<br/>
-	<textarea name="creativeinfo" cols="40" rows="1">{"bgimage":"water","price":"$10.95"}</textarea><br/><br/>
+	<textarea name="creativeinfo" cols="40" rows="10">{
+	"TemplateID": 68851,
+	"fields":{
+		"RegularPrice":"$10.99",
+		"SalePrice":"$8.99",
+		"OfferExpires":"8/15/2013",
+		"BackgroundImage":"water"
+	},
+	"layers":["onestore","bold","holiday"]
+}</textarea><br/><br/>
 
 	requestedcount<br/> <input type="text" name="requestedcount" value="100" size="6"/><br/>
 
@@ -169,16 +196,6 @@ Once a list has been created it can be retrieved with a GET request.
 
 * * *
 
-Submit a List
--------------
-Once the affiliate has confirmed that they wish to execute a campaign, the list/submit action will be invoked. This indicates to the List Provider that Balihoo is committed to using this list and that the work necessary to retrieve a final count and provision the list should begin.
-
-<form action="medium/directmail/brand/oscorp/criteria/carcare/list/0/submit" method="post" target="if6">
-	<label>POST to: medium/directmail/brand/oscorp/criteria/carcare/list/0/submit</label>
-	<input type="submit" value="POST"/>
-</form>
-<iframe name="if6" src="about:blank"></iframe>
-
 Cancel a List
 -------------
 If the affiliate decides to cancel the campaign, Balihoo will attempt to cancel the list with the List Provided. If the list has already been submitted, the List Provider may choose to cancel the list or respond with `403 - Forbidden`. After the `Final Count` has been made, the list should no longer be cancelable.
@@ -188,6 +205,8 @@ If the affiliate decides to cancel the campaign, Balihoo will attempt to cancel 
 	<input type="submit" value="POST"/>
 </form>
 <iframe name="if7" src="about:blank"></iframe>
+
+* * *
 
 Background Jobs
 ---------------
@@ -210,12 +229,15 @@ The following actions are not normally invoked via the API, but are triggered ev
 
 <iframe name="ifjob" src="about:blank"></iframe>
 
+* * *
 
 Download a Prepared List
 ------------------------
 Once a list has reached the `List Ready` status the list/download link will become available. Click on the link to download the final recipient list.
 
 <a href="medium/directmail/brand/oscorp/criteria/carcare/list/0/download" target="_blank">medium/directmail/brand/oscorp/criteria/carcare/list/0/download</a><br/>
+
+* * *
 
 Updating Campaign Recipient Results
 -----------------------------------

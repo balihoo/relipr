@@ -59,7 +59,7 @@ class ListResource extends BasicResource{
 			'requestedcount' => $_POST['requestedcount'],
 			'isestimate' => null,
 			'cost' => null,
-			'status' => ListDTO::STATUS_NEW,
+			'status' => ListDTO::STATUS_SUBMITTED,
 			'callback' => $callback,
 			'filter' => $_POST['filter'],
 			'orderinfo' => $orderinfo,
