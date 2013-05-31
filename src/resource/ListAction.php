@@ -5,6 +5,7 @@
 */
 
 require_once('BasicResource.php');
+require_once('ResultDTO.php');
 
 use Tonic\Response,
 		Tonic\NotFoundException;
@@ -26,6 +27,7 @@ class ListAction extends BasicResource{
 		switch($this->command) {
 			case 'submit': return $this->submitList();
 			case 'cancel': return $this->cancelList();
+			case 'result': return $this->postResults();
 			default:
 				throw new NotFoundException("List action '{$this->command}' not found");
 		}
@@ -90,6 +92,24 @@ class ListAction extends BasicResource{
 		return new Response(Response::OK, $this->db->getListCount($list));
 	}
 
+	// Post results
+	private function postResults() {
+		// Get the results array
+		if(!isset($_POST['results']) || trim($_POST['results']) == '')
+			return new Response(Response::BADREQUEST, "Missing or empty 'results'");
+
+		// Parse the results array (decodeObject should be moved to a utility function)
+		$results = ListDTO::decodeObject($_POST['results']);
+
+		// Validate each of the results and pretend to do something with them
+		$processed = 0;
+		foreach($results as $result) {
+			ResultDTO::fromArray($result);
+			$processed++;
+		}
+
+		return new Response(Response::OK, "Processed $processed results");
+	}
 
 }
 

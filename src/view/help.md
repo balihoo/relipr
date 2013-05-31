@@ -241,5 +241,16 @@ Once a list has reached the `List Ready` status the list/download link will beco
 
 Updating Campaign Recipient Results
 -----------------------------------
-COMING SOON
+After a campaign has executed, Balihoo will collect campaign results. As campaign results are collected Balihoo will POST results to the List Provider.
+<form action="medium/directmail/brand/oscorp/criteria/carcare/list/0/result" method="POST" target="ifresult">
+	results<br/>
+	<textarea name="results" cols="40" rows="5">[
+{"type": "delivered", "recipientid": "1234", "timestamp": 1369935877, "detail":"Message delivered"},
+{"type": "hardbounce", "recipientid": "2384", "timestamp": 1369992185, "detail": "Unrecognized email address"},
+{"type": "click", "recipientid": "5297", "timestamp": 1369935876, "detail": "http://www.example.com/testclick"}
+]</textarea><br/><br/>
+	<input type="submit" value="Post Results to:"/>
+	<label>medium/directmail/brand/oscorp/criteria/carcare/list/0/result</label>
+</form>
+<iframe name="ifresult" src="about:blank" style="height:100px"></iframe>
 

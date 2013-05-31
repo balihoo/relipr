@@ -46,3 +46,6 @@ try {
 // Spit out the response
 $response->output();
 
+// Be sure to close the database connection
+DB::close();
+

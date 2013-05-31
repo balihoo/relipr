@@ -188,30 +188,6 @@ function checkList($pest, $medium, $brandkey, $criteriaid) {
 		$listid = $list['listid'];
 		info("Created new list with id $listid");
 
-		if(!array_key_exists('links', $list) || !array_key_exists('submit', $list['links'])) {
-			error("Expected to find a submit link on list $listid, but none was provided");
-		} else {
-			$submit = $list['links']['submit'];
-			$link = clone $pest;
-			$link->base_url = $submit;
-			info("Submitting list with id $listid");
-			$newList = $link->post('', array());
-
-			info("Checking submitted list");
-			if($newList['listid'] != $listid)
-				error("New listid is {$newList['listid']} and does not match $listid");
-			if($newList['status'] != 'Submitted')
-				error("New list status should be 'Submitted' but is '{$newList['status']}");
-			if($newList['medium'] != $medium)
-				error("New list medium should be '$medium' but is '{$newList['medium']}");
-			if($newList['brandkey'] != $brandkey)
-				error("New list brandkey should be '$brandkey' but is '{$newList['brandkey']}");
-			if($newList['criteriaid'] != $criteriaid)
-				error("New list criteriaid should be '$criteriaid' but is '{$newList['criteriaid']}");
-			if($newList['requestedcount'] != $count)
-				error("New list requestedcount should be '$count' but is '{$newList['requestedcount']}");
-		}
-
 		// Make sure that get returns the list object
 		if(!array_key_exists('links', $list) || !array_key_exists('self', $list['links'])) {
 			error("Expected to find a self link on list $listid, but none was provided");

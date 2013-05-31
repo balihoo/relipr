@@ -24,6 +24,11 @@ class DB {
 		$this->db->exec('PRAGMA foreign_keys = ON;');
 	}
 
+	public static function close() {
+		if(self::$instance != null)
+			self::$instance->db->close();
+	}
+
 	// Singleton method
 	public static function getInstance() {
 		if(self::$instance === null)
