@@ -25,6 +25,11 @@ $config = array(
     ),
 );
 
+// Check for X-CHAOS header
+$chaosHeader = 'HTTP_X_CHAOS';
+if(array_key_exists($chaosHeader, $_SERVER))
+	require_once 'chaos.php';
+
 // Create a tonic app and request
 $app = new Tonic\Application($config);
 $request = new Tonic\Request();
