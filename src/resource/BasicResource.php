@@ -82,8 +82,24 @@ abstract class BasicResource extends Resource {
 
 	// Formate the response by encoding the response body with nicely formatted JSON
 	protected function formatJSON($response) {
+		global $_CHAOS;
 	  $response->contentType = "application/json";
-		$response->body = $this->indent(json_encode($response->body));
+
+		// Mess up the criteria object if the chaos header is set to BADCONFIG
+		if($_CHAOS == 'BADCONFIG') {
+			if(isset($response->body->criteriaid))
+				unset($response->body->criteriaid);
+			if(isset($response->body->criteria))
+				$response->body->criteria[] = array('type'=>'crud','title'=>'broken');
+		}
+
+		$body = $this->indent(json_encode($response->body));
+
+		// Insert an extra curly brace if the bad format chaos header is turned on
+		if($_CHAOS == 'BADFORMAT')
+			$body .= "}";
+
+		$response->body = $body;
 	}
 
 	// Set up a magical getter for the db connections
