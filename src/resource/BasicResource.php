@@ -70,8 +70,10 @@ abstract class BasicResource extends Resource {
 			if(!$brandkey)
 				throw new NotFoundException("Unable to find affiliate with no brand specified");
 			$affiliatenumber = $this->params['affiliatenumber'];
+			/*
 			if($this->db->getAffiliate($brandkey, $affiliatenumber) == NULL)
 				throw new NotFoundException("Unable to find affiliate '$affiliatenumber' in brand '$brandkey'");
+			*/
 		}
 
 	}

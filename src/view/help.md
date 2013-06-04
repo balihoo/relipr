@@ -2,6 +2,10 @@ Documentation
 =============
 This document will walk you through a handful of examples that demonstrate how to implement and use the Balihoo List Provider API. These examples are tied into the sample list database hosted on this site. If the database has been altered drastically from its original form, these examples may not yield the expected results.
 
+If you are asked for authentication credentials, use the following:
+**username**: test
+**password**: letmein
+
 This document assumes that the reader already has a full understanding of [Balihoo List Integration](https://docs.google.com/document/d/1QSqS5QpAx4wG7__ZQaLScTmpd-IqiEBJD0Mth9926Wg/edit?usp=sharing "Baliho List Integration"). The source code for this documentation and reference implementation can be found on [github](https://github.com/pauldprice/relipr "Source Code").
 
 To test the example criteria or other criteria please visit the [sandbox criteria utility](http://balihoo-test.s3.amazonaws.com/devSwfs/sandbox.swf "Sandbox Utility")
