@@ -108,9 +108,10 @@ class CriteriaList
 		return $this->top;
 	}
 
-	public function startSection($title) {
+	public function startSection($title, $description = null) {
 		$this->top = null;
 		$section = new CriteriaSection($title, $this);
+		$section->description = $description;
 		$this->criteria[] = $section;
 		return $section;
 	}
@@ -125,6 +126,12 @@ class CriteriaList
 	public function addSelect($criterionid, $title, $options, $description = null) {
 		$this->top = new CriterionSelect($criterionid, $title, $description);
 		$this->top->setOptions($options);
+		$this->criteria[] = $this->top;
+		return $this;
+	}
+
+	public function addText($criterionid, $title, $description = null) {
+		$this->top = new CriterionText($criterionid, $title, $description);
 		$this->criteria[] = $this->top;
 		return $this;
 	}
@@ -236,6 +243,11 @@ abstract class Criterion
 		if($description)
 			$this->description = $description;
 	}
+}
+
+class CriterionText extends Criterion
+{
+	public $type = 'text';
 }
 
 class CriterionSelect extends Criterion

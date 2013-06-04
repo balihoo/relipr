@@ -26,6 +26,17 @@ SQL;
 			'r.gender = g.value', 'g.value', 'g.title');
 	}
 
+	public static function radius($min, $max, $unit = "", $units = "") {
+		$options = array();
+		for($i = $min; $i <= $max; $i++) {
+			$options[] = array(
+				'title' => $i . ($i == 1 ? " $unit" : " $units"),
+				'value' => $i
+			);
+		}
+		return $options;
+	}
+
 	public static function incomeRange($brandkey, $affiliatenumber) {
 		$sql = <<<SQL
 select ir.range || ' (' || count(r.recipientid) || ' customers)' title, ir.lo value

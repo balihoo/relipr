@@ -99,6 +99,10 @@ abstract class CriteriaBase
 				$sql .= " and mileage <= $m2";
 		}
 
+		if(isset($filter->income)) {
+			$sql .= " and income >= $filter->income";
+		}
+
 		return "$sql;";
 	}
 
@@ -126,7 +130,7 @@ abstract class CriteriaBase
 	}
 
 	// Start the build chain (fluent interface design pattern)
-	protected function build($title, $description) {
+	protected function build($title, $description = null) {
 		$this->spec->title = $title;
 		$this->spec->description = $description;
 		return $this->spec;
