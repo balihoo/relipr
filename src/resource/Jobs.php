@@ -25,7 +25,9 @@ class Jobs extends BasicResource{
 	public function dispatch($jobname){
 		// Determine which action to take base on the provided job name
 		switch($jobname) {
-			case 'callback': return $this->executeCallbacks();
+			case 'callback':
+				$result = $this->executeCallbacks();
+				return new Response(Response::OK, $result);
 			case 'count': return $this->executeCounts();
 			case 'ready': return $this->prepareLists();
 			default:
@@ -35,22 +37,33 @@ class Jobs extends BasicResource{
 
 	// Find lists that are submitted and count them
 	private function executeCounts() {
+		$result = array();
 		$lists = $this->db->findLists(ListDTO::STATUS_SUBMITTED);
-		foreach($lists as $list)
-			$this->db->countList($list);
-		return $this->executeCallbacks();
+		foreach($lists as $list) {
+			try {
+				$this->db->countList($list);
+			} catch (Exception $ex) {
+				$result[] = "Error while counting list {$list->listid}: " . $ex->getMessage();
+			}
+		}
+		return new Response(Response::OK, array_merge($result, $this->executeCallbacks()));
 	}
 
 	// Find lists that are in the final count status and update them to ready
 	// The delay between submit, count and ready is artificial, but useful for
 	// testing and demonstration purposes
 	private function prepareLists() {
+		$result = array();
 		$lists = $this->db->findLists(ListDTO::STATUS_FINALCOUNT);
 		foreach($lists as $list) {
-			$list->status = ListDTO::STATUS_LISTREADY;
-			$this->db->saveList($list, array('readied = datetime()'));
+			try {
+				$list->status = ListDTO::STATUS_LISTREADY;
+				$this->db->saveList($list, array('readied = datetime()'));
+			} catch (Exception $ex) {
+				$result[] = "Error while preparing list {$list->listid}: " . $ex->getMessage();
+			}
 		}
-		return $this->executeCallbacks();
+		return new Response(Response::OK, array_merge($result, $this->executeCallbacks()));
 	}
 
 	// Find lists that have been canceled, counted or made ready for download and notify client
@@ -70,7 +83,7 @@ class Jobs extends BasicResource{
 			if($list->getReadied() != null && $list->getReadyNotified() == null)
 				$result[] = $this->executeCallback($list, 'ready');
 		}
-		return new Response(Response::OK , $result);
+		return $result;
 	}
 
 	// Run any pending callbacks, sending a POST to the registered

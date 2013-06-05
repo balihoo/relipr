@@ -49,6 +49,9 @@ class ListResource extends BasicResource{
 		$affiliateinfo = (!isset($_POST['affiliateinfo']) || trim($_POST['affiliateinfo']) == '')
 			? '[]' : $_POST['affiliateinfo'];
 
+		// Make sure that the requested criteria actually exists
+		$criteriaObject = CriteriaBuilder::getCriteriaObject($this->medium, $this->brandkey, $this->criteriaid);
+
 		// Create a template for the list constructor
 		$listArray = array(
 			'listid' => null,
