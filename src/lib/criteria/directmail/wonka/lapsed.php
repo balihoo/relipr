@@ -13,6 +13,8 @@ class directmail_wonka_lapsed extends CriteriaBase
 					->setdefaultminlabel("None")->setdefaultmaxlabel(5)
 				->addText("zipcodes", "Mail to Customers in Specific Zip Codes")
 					->sethelptext("Enter zip codes separated by commas")
+					->setregex("^\s*[0-9]{5}(\s*,\s*[0-9]{5})*\s*$")
+					->setwidth(400)
 		;
 	}
 

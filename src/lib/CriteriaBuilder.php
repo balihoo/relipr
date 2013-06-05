@@ -248,6 +248,8 @@ abstract class Criterion
 class CriterionText extends Criterion
 {
 	public $type = 'text';
+	public $width = 100;
+	public $regex = null;
 }
 
 class CriterionSelect extends Criterion
