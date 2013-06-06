@@ -131,7 +131,6 @@ create table list(
 	readied datetime null,
 	readynotified datetime null,
 	callbackfailures integer default 0,
-	foreign key(brandkey) references brand(brandkey),
 	foreign key(status) references status(status)
 );
 select 'Created list table';

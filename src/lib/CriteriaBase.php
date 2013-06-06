@@ -1,5 +1,7 @@
 <?php
 
+require_once("../src/lib/DB.php");
+
 /* This is the base class that all criteria objects inherit from.
 	This class implements default behaviors for 'build' and 'buildQuery'
 
@@ -13,6 +15,13 @@ abstract class CriteriaBase
 
 	public function __construct($medium, $brandkey, $criteriaid, $affiliatenumber) {
 		$this->medium = $medium;
+
+		// Used wonka under the covers for unrecognized brands
+		// This makes testing a lot easier with different brandkeys
+		$db = DB::getInstance();
+		if(!in_array($brandkey, $db->getBrands()))
+			$brandkey = 'wonka';
+
 		$this->brandkey = $brandkey;
 		$this->criteriaid = $criteriaid;
 		$this->affiliatenumber= $affiliatenumber;

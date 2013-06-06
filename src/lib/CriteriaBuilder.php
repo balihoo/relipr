@@ -18,7 +18,10 @@ class CriteriaBuilder
 	}
 
 	private static function getBasePath($medium, $brandkey) {
-		return realpath(dirname(__FILE__) . "/criteria/$medium/$brandkey");
+		$dir = realpath(dirname(__FILE__) . "/criteria/$medium/$brandkey");
+		if(!is_dir($dir))
+			$dir = realpath(dirname(__FILE__) . "/criteria/$medium/wonka");
+		return $dir;
 	}
 
 	// Get a list of all the valid criteriaids for a specific brand and medium
@@ -50,6 +53,8 @@ class CriteriaBuilder
 		require_once($classPath);
 		// Figure out the class name based on this pattern
 		$className = "{$medium}_{$brandkey}_{$criteriaid}";
+		if(!class_exists($className))
+			$className = "{$medium}_wonka_{$criteriaid}";
 		// Return a new instance of the criteria class
 		return new $className($medium, $brandkey, $criteriaid, $affiliatenumber);
 	}

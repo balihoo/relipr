@@ -58,11 +58,13 @@ abstract class BasicResource extends Resource {
 		}
 
 		// If the brand parameter is set, make sure it is a brand that we know about
+// Turning this off for now so that we can test with any brandkey
+/*
 		if(isset($this->params['brandkey'])) {
 			$brandkey = $this->params['brandkey'];
-			if(!in_array($brandkey, $this->db->getBrands()))
-				$this->params['brandkey'] = 'wonka';
-//				throw new NotFoundException("Unable to find any brand with key '$brandkey'");
+			if(!in_array($brandkey, $this->db->getBrands())) {
+				throw new NotFoundException("Unable to find any brand with key '$brandkey'");
+			}
 		}
 
 		// If the affiliate parameter is set, make sure that it has records in this brand
@@ -70,11 +72,10 @@ abstract class BasicResource extends Resource {
 			if(!$brandkey)
 				throw new NotFoundException("Unable to find affiliate with no brand specified");
 			$affiliatenumber = $this->params['affiliatenumber'];
-			/*
 			if($this->db->getAffiliate($brandkey, $affiliatenumber) == NULL)
 				throw new NotFoundException("Unable to find affiliate '$affiliatenumber' in brand '$brandkey'");
-			*/
 		}
+*/
 
 	}
 

@@ -115,15 +115,10 @@ class DB {
 		$list->isestimate = false;
 		$list->cost = $list->count * 0.05;
 
-		// Automatically cancel the list if the count is 0
-		if($list->count == 0) {
-			$this->cancelList($list);
-		} else {
-			// Save the list if it has a non-zero count
-			$list->status = ListDTO::STATUS_FINALCOUNT;
-			$list->updateLinks();
-			$this->saveList($list, array('counted= datetime()'));
-		}
+		// Save the list if it has a non-zero count
+		$list->status = ListDTO::STATUS_FINALCOUNT;
+		$list->updateLinks();
+		$this->saveList($list, array('counted= datetime()'));
 	}
 
 	// TODO: only select the specified columns

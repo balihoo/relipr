@@ -181,7 +181,7 @@ A _list_ contains all of the information about a campaign that will enable the L
 
 	requestedcount<br/> <input type="text" name="requestedcount" value="100" size="6"/><br/>
 
-	callback<br/> <input type="text" name="callback" size="40" value="http://requestb.in/ze3zyxze"/><br/>
+	callback<br/> <input type="text" name="callback" size="40" value="http://requestb.in/rxoo58rx"/><br/>
 
 	<input type="submit" value="POST to:"/>
 	medium/directmail/brand/oscorp/criteria/carcare/list<br/>
@@ -218,7 +218,7 @@ The following actions are not normally invoked via the API, but are triggered ev
 
 <form action="/jobs/callback" method="POST" target="ifjob">
 	<input type="submit" value="Run Callbacks"/>
-	Run any pending callback events. If a list has been cancelled, counted or readied then the event and list will be posted to the provided callback url. If you used the default callback url from this documentation then you will see the callback POST details in the <a href="http://requestb.in/ze3zyxze?inspect">requestb.in bucket</a>.
+	Run any pending callback events. If a list has been cancelled, counted or readied then the event and list will be posted to the provided callback url. If you used the default callback url from this documentation then you will see the callback POST details in the <a href="http://requestb.in/rxoo58rx?inspect">requestb.in bucket</a>.
 </form>
 
 <form action="/jobs/count" method="POST" target="ifjob">
