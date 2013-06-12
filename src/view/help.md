@@ -143,7 +143,12 @@ A _list_ contains all of the information about a campaign that will enable the L
 }</textarea><br/><br/>
 
 	orderinfo<br/>
-	<textarea name="orderinfo" cols="40" rows="1">{"OrderID":10,"AffiliateNumber":"75","StartDate":"2016-12-25","User":"jim@example.com"}</textarea><br/><br/>
+	<textarea name="orderinfo" cols="40" rows="10">{
+	"OrderID":10,
+	"AffiliateNumber":"75",
+	"StartDate":"2016-12-25",
+	"IsAffiliateInitiated":false
+}</textarea><br/><br/>
 
 	affiliateinfo<br/>
 	<textarea name="affiliateinfo" cols="40" rows="10">{
@@ -161,6 +166,12 @@ A _list_ contains all of the information about a campaign that will enable the L
 		"Fax":"208-555-5551",
 		"Email":"bob@example.com"
 	},
+	"Segments":[
+		{	"Segment":"Default",
+			"StartDate":"2000-01-01",
+			"EndDate":null
+		}
+	],
 	"Attributes":{
 		"_BusinessHours":"M-F 8-5",
 		"_Directions":"Corner of Main and Front"
@@ -169,14 +180,24 @@ A _list_ contains all of the information about a campaign that will enable the L
 
 	creativeinfo<br/>
 	<textarea name="creativeinfo" cols="40" rows="10">{
-	"TemplateID": 68851,
 	"fields":{
 		"RegularPrice":"$10.99",
 		"SalePrice":"$8.99",
 		"OfferExpires":"8/15/2013",
 		"BackgroundImage":"water"
 	},
-	"layers":["onestore","bold","holiday"]
+	"layers":{
+		"onestore": "onestore",
+		"base": "base",
+		"holiday": "holiday"
+	},
+	"creativedetails":{
+		"Name":"5.5 x 8.5 Magnet Mailer",
+		"TemplateName":"5.5 x 8.5 Magnet Mailer",
+		"User":"bob@example.com",
+		"TemplateID":28532,
+		"CreativeID":28533
+	}
 }</textarea><br/><br/>
 
 	requestedcount<br/> <input type="text" name="requestedcount" value="100" size="6"/><br/>
