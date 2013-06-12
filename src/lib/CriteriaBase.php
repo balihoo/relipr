@@ -24,7 +24,9 @@ abstract class CriteriaBase
 
 		$this->brandkey = $brandkey;
 		$this->criteriaid = $criteriaid;
-		$this->affiliatenumber= $affiliatenumber;
+
+		// The wonka brand is special, always use affiliate 53
+		$this->affiliatenumber= $brandkey == 'wonka' ? '53' : $affiliatenumber;
 
 		$this->spec = new CriteriaSpec($criteriaid, 'No title', 'No description');
 		
@@ -85,7 +87,13 @@ abstract class CriteriaBase
 		$sql = "from recipient where";
 		$sql .= " brandkey = '{$this->brandkey}'";
 
-		$sql .= $this->inClause($filter, 'affiliates', 'affiliatenumber', true);
+		// Add affiliate number to the query
+		// The wonka brand is special and needs to query for affiliate 53
+		if(isset($filter->affiliates) && count($filter->affiliates) > 0 && $this->brandkey == 'wonka')
+			$sql .= " and affiliatenumber = '53'";
+		else
+			$sql .= $this->inClause($filter, 'affiliates', 'affiliatenumber', true);
+
 		$sql .= $this->vehicleSelect($filter, 'vehicle');
 		$sql .= $this->inClause($filter, 'custloyalty', 'loyaltyprogram', true);
 		$sql .= $this->inClause($filter, 'gender', 'gender', true);
