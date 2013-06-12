@@ -10,7 +10,7 @@ class directmail_wonka_lapsed extends CriteriaBase
             "By default we select customers who have not returned to your salon in the last 90 days but previously visited your salon up to 1 year ago.")
 				->addNumberRange("numvisits", "Number of visits in the last 90 days")
 					->setunit("visits")->setmin(0)->setmax(5)
-					->setdefaultminlabel("None")->setdefaultmaxlabel(5)
+					->setdefaultminlabel("None")->setdefaultmaxlabel("5")
 				->addText("zipcodes", "Mail to Customers in Specific Zip Codes")
 					->sethelptext("Enter zip codes separated by commas")
 					->setregex("^\s*[0-9]{5}(\s*,\s*[0-9]{5})*\s*$")
