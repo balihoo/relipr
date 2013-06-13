@@ -48,7 +48,7 @@ class email_choam_everything extends CriteriaBase
 				->setunit('Pet(s)')->setdefaultvalue(1)->setmin(0)
 			->addNumberRange('age', 'Age', 'Select the age range you want to target')
 				->setinteger(true)->setmin(18)->setmax(200)->setunit('years of age')
-				->setdefaultminlabel(18)->setdefaultmaxlabel('Super old')
+				->setdefaultminlabel('18')->setdefaultmaxlabel('Super old')
 		;
 
 	}

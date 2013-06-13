@@ -62,18 +62,22 @@ SQL;
 			$model = $data[1];
 
 			if($make != $lastMake) {
-				$options[++$idx] = array(
-					'value' => $make,
-					'title' => $make,
-					'criteria' => array(
+				$criterion = array(
 						'criterionid' => 'model',
 						'type' => 'selectsingle',
 						'title' => 'Model',
 						'options' => array('Any'),
-					));
+				);
+				$criteria = array();
+				$criteria[] = $criterion;
+
+				$options[++$idx] = array(
+					'value' => $make,
+					'title' => $make,
+					'criteria' => $criteria);
 				$lastMake = $make;
 			}
-			$options[$idx]['criteria']['options'][] = $model;
+			$options[$idx]['criteria'][0]['options'][] = $model;
 		}
 
 		$years = array();
