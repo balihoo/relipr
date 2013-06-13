@@ -118,7 +118,6 @@ create table list(
 	columns varchar(1000) not null,
 	requestedcount integer not null,
 	count integer null,
-	isestimate integer null,
 	cost float null,
 	status varchar(10) not null,
 	callback varchar(255) null,

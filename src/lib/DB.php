@@ -112,7 +112,6 @@ class DB {
 
 	public function countList($list) {
 		$list->count = $this->getListCount($list);
-		$list->isestimate = false;
 		$list->cost = $list->count * 0.05;
 
 		// Save the list if it has a non-zero count
@@ -171,10 +170,10 @@ class DB {
 			$stmt = $this->db->prepare("
 			insert into list(
 				medium, brandkey, criteriaid, filter, orderinfo, affiliateinfo, creativeinfo, requestedcount,
-				count, status, columns, callback, isestimate, cost, inserted, cancelnotified, readied)
+				count, status, columns, callback, cost, inserted, cancelnotified, readied)
 			values(
 				:medium, :brandkey, :criteriaid, :filter, :orderinfo, :affiliateinfo, :creativeinfo, :requestedcount,
-				:count, :status, :columns, :callback, :isestimate, :cost, datetime(), null, null);
+				:count, :status, :columns, :callback, :cost, datetime(), null, null);
 			");
 		} else {
 			$sql = 'update list set ';
@@ -193,7 +192,6 @@ class DB {
 				count = :count,
 				status = :status,
 				columns = :columns,
-				isestimate = :isestimate,
 				cost = :cost
 			where listid = :listid;';
 			// Prepare the update statement
@@ -214,7 +212,6 @@ class DB {
 		$stmt->bindValue(':status', $list->status, SQLITE3_TEXT);
 		$stmt->bindValue(':columns', ListDTO::encodeColumns($list->columns), SQLITE3_TEXT);
 		$stmt->bindValue(':callback', $list->callback, SQLITE3_TEXT);
-		$stmt->bindValue(':isestimate', $list->isestimate, SQLITE3_INTEGER);
 		$stmt->bindValue(':cost', $list->cost, SQLITE3_FLOAT);
 		$stmt->execute();
 

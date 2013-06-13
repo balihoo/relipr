@@ -60,7 +60,6 @@ class ListResource extends BasicResource{
 			'criteriaid' => $this->criteriaid,
 			'medium' => $this->medium,
 			'requestedcount' => $_POST['requestedcount'],
-			'isestimate' => null,
 			'cost' => null,
 			'status' => ListDTO::STATUS_SUBMITTED,
 			'callback' => $callback,
