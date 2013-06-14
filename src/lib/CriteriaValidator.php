@@ -235,6 +235,9 @@ class CriteriaValidator {
 	}
 
 	private function validateNestedSingle($criterion, $criterionid) {
+		$foundDefault = false;
+		$default = isset($criterion->defaultvalue) ? $criterion->defaultvalue : null;
+
 		// This has a special set of options with title/criteria
 		if(isset($criterion->options)) {
 			$index = 0;
@@ -244,6 +247,8 @@ class CriteriaValidator {
 					$this->error("Option #$index of criterion '$criterionid' is missing property 'title'");
 				else if($option->title == "")
 					$this->error("Option #$index of criterion '$criterionid' has an empty 'title'");
+				else if($default !== null && $option->title == $default)
+					$foundDefault=true;
 
 				if(isset($option->criteria)) {
 					$this->validateCriteriaCollection($option->criteria, "option #$index of $criterionid");
@@ -254,6 +259,8 @@ class CriteriaValidator {
 			}
 			if($index == 0)
 				$this->error("'options' property of criterion '$criterionid' should not be empty");
+			else if($default !== null && !$foundDefault)
+				$this->error("No option of criterion '$criterionid' matches default value '$default'");
 		} else {
 			$this->error("Criterion '$criterionid' is missing the 'options' property");
 		}
