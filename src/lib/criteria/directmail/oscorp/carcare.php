@@ -11,6 +11,7 @@ class directmail_oscorp_carcare extends CriteriaBase
 			->addDateRange('visitedrange', 'Visited', 'Only mail to customers that have visited between these dates')
 			->addNested('vehicles', 'Vehicles', OptionBuilder::vehicles($this->brandkey, $this->affiliatenumber),
 					'Choose the vehicles, makes and models, etc')
+				->setdefaultvalue('All Vehicles')
 			->addNumberRange('mileage', 'Vehicle Mileage', 'Choose target vehicle mileage')
 				->setmin(0)->setdefaultminlabel("New")
 				->setmax(1000000)->setdefaultmaxlabel("Unlimited")
