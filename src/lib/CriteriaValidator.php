@@ -1,5 +1,10 @@
 <?php
 
+/*
+	The canonical source for this validator can be found at:
+	https://raw.github.com/pauldprice/relipr/master/src/lib/CriteriaValidator.php
+*/
+
 class CriteriaValidationException extends Exception{
 	protected $errors;
 	protected $warnings;
@@ -237,6 +242,9 @@ class CriteriaValidator {
 				// Needs a title and criteria array
 				if(!isset($option->title))
 					$this->error("Option #$index of criterion '$criterionid' is missing property 'title'");
+				else if($option->title == "")
+					$this->error("Option #$index of criterion '$criterionid' has an empty 'title'");
+
 				if(isset($option->criteria)) {
 					$this->validateCriteriaCollection($option->criteria, "option #$index of $criterionid");
 				} else {

@@ -97,6 +97,7 @@ abstract class CriteriaBase
 		$sql .= $this->vehicleSelect($filter, 'vehicle');
 		$sql .= $this->inClause($filter, 'custloyalty', 'loyaltyprogram', true);
 		$sql .= $this->inClause($filter, 'gender', 'gender', true);
+		$sql .= $this->inClause($filter, 'postalcodes', 'postalcode', false);
 
 		if(isset($filter->visitedrange) && count($filter->visitedrange) == 2) {
 			$r1 = $filter->visitedrange[0];
