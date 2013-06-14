@@ -3,9 +3,9 @@
 class directmail_wonka_lapsed extends CriteriaBase
 {
 	public function buildCriteria() {
-		$this->build('Lapsed Customers')
+		$this->build('Lapsed Customers', '')
 			->addSelect('delivery', 'Campaign Delivery', array("Ongoing", "One Time"))
-				->setrequired(true)
+			->setdefaultvalue('Ongoing')
 			->startSection("Data Pull Date Range",
             "By default we select customers who have not returned to your salon in the last 90 days but previously visited your salon up to 1 year ago.")
 				->addNumberRange("numvisits", "Number of visits in the last 90 days")
