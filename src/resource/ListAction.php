@@ -65,17 +65,26 @@ class ListAction extends BasicResource{
 
 	// Try to download the list
 	private function downloadList() {
-		$list = $this->db->getList($this->medium, $this->brandkey, $this->criteriaid, $this->listid);
+		if($this->listid != 'test') {
+			$list = $this->db->getList($this->medium, $this->brandkey, $this->criteriaid, $this->listid);
 
-		// Make sure that the requested list is ready to be downloaded
-		if($list->status != ListDTO::STATUS_LISTREADY)
-			return new Response(Response::BADREQUEST, 'This list is not ready for download');
+			// Make sure that the requested list is ready to be downloaded
+			if($list->status != ListDTO::STATUS_LISTREADY)
+				return new Response(Response::BADREQUEST, 'This list is not ready for download');
+		} else {
+			$list = new ListDTO();
+			$list->listid = 0;
+			$list->brandkey = $this->brandkey;
+			$list->medium = $this->medium;
+			$list->criteriaid = $this->criteriaid;
+			$list->requestedcount = 100;
+			$list->setFilter('{}');
+		}
 
 		// We'll cache the generated csv in a temporary file
 		$filePath = "/tmp/list_{$this->listid}.csv";
 		// If the file doesn't already exist, then create it
-		if(!file_exists($filePath))
-			$this->db->pullList($list, $filePath);
+		$this->db->pullList($list, $filePath);
 
 
 		// Send the file download response and exit

@@ -126,6 +126,12 @@ class DB {
 		$spec = $criteriaObject->getCriteriaSpec();
 		$columns = implode(',', array_keys($spec->columns));
 		$sql = "select $columns " . $criteriaObject->buildQuery($list->filter);
+
+		// If a requestedcount is set then limit the query to that many.
+		if($list->requestedcount)
+			$sql .= " limit $list->requestedcount";
+		$sql .= ';';
+
 		$result = $this->db->query($sql);
 
 		$fp = fopen($fname, 'w');
@@ -161,7 +167,7 @@ class DB {
 
 	public function getCountQuery($filter, $medium, $brandkey, $criteriaid) {
 		$criteriaObject = CriteriaBuilder::getCriteriaObject($medium, $brandkey, $criteriaid);
-		return "select count(*) " . $criteriaObject->buildQuery($filter);
+		return "select count(*) " . $criteriaObject->buildQuery($filter) . ";";
 	}
 
 	public function saveList($list, $updates = null) {

@@ -121,7 +121,7 @@ abstract class CriteriaBase
 			$sql .= " and income >= $filter->income";
 		}
 
-		return "$sql;";
+		return "$sql";
 	}
 
 	private function vehicleSelect($filter, $criterionid) {
