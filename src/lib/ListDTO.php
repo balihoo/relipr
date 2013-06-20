@@ -106,7 +106,7 @@ class ListDTO
 	public static function decodeObject($string) {
 		$object = json_decode($string);
 		if($object === NULL && json_last_error() != JSON_ERROR_NONE)
-			throw new Exception("Unable to decode JSON string: " . self::getJsonErrorMessage(json_last_error()), 400);
+			throw new Tonic\BadRequestException("Unable to decode JSON string: " . self::getJsonErrorMessage(json_last_error()));
 		return $object;
 	}
 

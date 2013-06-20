@@ -44,6 +44,8 @@ try {
 } catch (Tonic\UnauthorizedException $e) {
 	$response = new Tonic\Response(401, $e->getMessage());
 	$response->wwwAuthenticate = 'Basic realm="API Server"';
+} catch (Tonic\BadRequestException $e) {
+	$response = new Tonic\Response(400, $e->getMessage());
 } catch (Tonic\Exception $e) {
 	$response = new Tonic\Response($e->getCode(), $e->getMessage());
 }

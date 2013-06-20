@@ -102,7 +102,13 @@ class DB {
 	// Get the estimated count for a given filter and criteria
 	public function getFilterCount($filter, $medium, $brandkey, $criteriaid) {
 		$countQuery = $this->getCountQuery($filter, $medium, $brandkey, $criteriaid);
-		return $this->db->querySingle($countQuery);
+		try {
+			$result = $this->db->querySingle($countQuery);
+		} catch (Exception $ex) {
+			error_log("Error runing count query: `$countQuery`");
+			throw $ex;
+		}
+		return $result;
 	}
 
 	// Get the estimated count for a given list
@@ -132,7 +138,12 @@ class DB {
 			$sql .= " limit $list->requestedcount";
 		$sql .= ';';
 
-		$result = $this->db->query($sql);
+		try {
+			$result = $this->db->query($sql);
+		} catch (Exception $ex) {
+			error_log("Error executing list query: `$sql`");
+			throw $ex;
+		}
 
 		$fp = fopen($fname, 'w');
 
