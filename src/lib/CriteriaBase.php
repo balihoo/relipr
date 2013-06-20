@@ -117,10 +117,6 @@ abstract class CriteriaBase
 				$sql .= " and mileage <= $m2";
 		}
 
-		if(isset($filter->income)) {
-			$sql .= " and income >= $filter->income";
-		}
-
 		return "$sql";
 	}
 
