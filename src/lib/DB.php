@@ -230,7 +230,12 @@ class DB {
 		$stmt->bindValue(':columns', ListDTO::encodeColumns($list->columns), SQLITE3_TEXT);
 		$stmt->bindValue(':callback', $list->callback, SQLITE3_TEXT);
 		$stmt->bindValue(':cost', $list->cost, SQLITE3_FLOAT);
-		$stmt->execute();
+		try {
+			$stmt->execute();
+		} catch (Exception $ex) {
+			error_log ("Error saving list " . json_encode($list));
+			throw $ex;
+		}
 
 		// Set the list id if this was an insert
 		if($list->listid === null)
