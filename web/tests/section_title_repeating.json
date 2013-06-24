@@ -1,0 +1,15 @@
+{
+    "columns": {}, 
+    "criteria": [
+        {
+            "criteria": [], 
+            "criterionid": "section", 
+            "title": "Just Once", 
+            "type": "section"
+        }
+    ], 
+    "criteriaid": "1", 
+    "description": "Target customers who have not visited for 90-96 days.", 
+    "title": "Direct Mail - Lapsed"
+}
+
