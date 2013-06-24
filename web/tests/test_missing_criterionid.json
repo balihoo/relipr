@@ -1,0 +1,41 @@
+{
+    "columns": {}, 
+    "criteria": [
+        {
+            "criterionid": "is_control", 
+            "defaultvalue": "No", 
+            "description": null, 
+            "options": [
+                {
+                    "criteria": [], 
+                    "title": "No", 
+                    "value": "no"
+                }, 
+                {
+                    "criteria": [
+                        {
+                            "criterionid": "control_description", 
+                            "defaultvalue": null, 
+                            "description": "", 
+                            "editable": true, 
+                            "helptext": "This control description will be passed to Great Clips on the promo header/detail feed.", 
+                            "hidden": false, 
+                            "maxchars": 220, 
+                            "required": false, 
+                            "title": "Control Group Description (optional)", 
+                            "type": "text"
+                        }
+                    ], 
+                    "title": "Yes", 
+                    "value": "yes"
+                }
+            ], 
+            "title": "Exclude Control Group From Mailing?", 
+            "type": "nestedsingle"
+        }
+    ], 
+    "criteriaid": "1", 
+    "description": "Target customers who have not visited for 90-96 days.", 
+    "title": "Direct Mail - Lapsed"
+}
+
