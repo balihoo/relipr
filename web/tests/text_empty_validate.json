@@ -1,0 +1,15 @@
+{
+    "columns": {}, 
+    "criteria": [
+        {
+            "criterionid": "text", 
+            "regex": "^[A-Z][a-z]+$", 
+            "required": false, 
+            "title": "Campaign Delivery", 
+            "type": "text"
+        }
+    ], 
+    "criteriaid": "test", 
+    "description": "Testing text criterion validation", 
+    "title": "GC / DM / Lapsed"
+}
