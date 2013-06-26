@@ -1,0 +1,23 @@
+{
+    "criteriaid": "test", 
+    "description": "Testing defaults on 5+ options", 
+    "title": "Testing Defaults",
+    "columns": { }, 
+    "criteria": [
+        {
+            "criterionid": "test", 
+            "type": "selectsingle",
+            "title": "Testing...", 
+            "defaultvalue": "Charlie", 
+            "options": [
+                "Alpha", 
+                "Bravo",
+                "Charlie",
+                "Delta",
+                "Echo",
+                "Foxtrot"
+            ]
+        } 
+    ] 
+}
+
