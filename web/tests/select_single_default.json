@@ -1,0 +1,40 @@
+{
+    "columns": {}, 
+    "criteria": [
+        {
+            "criterionid": "test", 
+            "defaultvalue": "3", 
+            "options": [
+                {
+                    "title": "Alpha", 
+                    "value": "1"
+                }, 
+                {
+                    "title": "Bravo", 
+                    "value": "2"
+                }, 
+                {
+                    "title": "Charlie", 
+                    "value": "3"
+                }, 
+                {
+                    "title": "Delta", 
+                    "value": "4"
+                }, 
+                {
+                    "title": "Echo", 
+                    "value": "5"
+                }, 
+                {
+                    "title": "Foxtrot", 
+                    "value": "6"
+                }
+            ], 
+            "title": "Testing...", 
+            "type": "selectsingle"
+        }
+    ], 
+    "criteriaid": "test", 
+    "description": "Testing defaults on 5+ options", 
+    "title": "Testing Defaults"
+}
