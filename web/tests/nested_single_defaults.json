@@ -1,0 +1,40 @@
+{
+    "columns": {}, 
+    "criteria": [
+        {
+            "criterionid": "is_control", 
+            "defaultvalue": "Yes", 
+            "description": null, 
+            "options": [
+                {
+                    "criteria": [], 
+                    "title": "No", 
+                    "value": "is_control_no"
+                }, 
+                {
+                    "criteria": [
+                        {
+                            "criterionid": "control_description", 
+                            "defaultvalue": null, 
+                            "description": "", 
+                            "editable": true, 
+                            "helptext": null, 
+                            "hidden": false, 
+                            "maxchars": 200, 
+                            "required": false, 
+                            "title": "Control Group Description (optional)", 
+                            "type": "text"
+                        }
+                    ], 
+                    "title": "Yes", 
+                    "value": "is_control_yes"
+                }
+            ], 
+            "title": "Control Group?", 
+            "type": "nestedsingle"
+        }
+    ], 
+    "criteriaid": "12", 
+    "description": "Target customers who have not visited for 90+ days.", 
+    "title": "Email - Lapsed"
+}
