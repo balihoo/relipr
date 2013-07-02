@@ -208,6 +208,7 @@ class CriteriaValidator {
 			case 'date': $this->validateDate($criterion, $criterionid); break;
 			case 'daterange': $this->validateDateRange($criterion, $criterionid); break;
 			case 'number': $this->validateNumber($criterion, $criterionid); break;
+			case 'info': $this->validateInfo($criterion, $criterionid); break;
 			default:
 				$this->error("Unrecognized criterion type '$type' for criterion $criterionid");
 		}
@@ -463,6 +464,11 @@ class CriteriaValidator {
 			if(@preg_match('/' . $criterion->regex . '/', "") === FALSE || preg_last_error() != PREG_NO_ERROR)
 				$this->error("'regex' property of criterion '$criterionid' is not valid");
 		}
+	}
+
+	private function validateInfo($criterion, $criterionid) {
+		if(!isset($criterion->title) || trim($criterion->title) == "")
+			$this->error("Criterion '$criterionid' of type 'info' needs to have a non-empty 'title' property");
 	}
 
 	private function registerCriterionid($criterionid) {
