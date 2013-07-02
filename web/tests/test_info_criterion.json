@@ -1,0 +1,96 @@
+{
+    "columns": {
+        "address1": "The recipient's mailing address (line 1)", 
+        "address2": "The recipient's mailing address (line 2)", 
+        "city": "The recipient's mailing city", 
+        "country": "The recipient's mailing country.", 
+        "couponbarcodes": "A list of barcodes for each coupon", 
+        "couponexpirations": "A list of expiration dates for each coupon", 
+        "firstname": "The recipient's first name", 
+        "lastname": "The recipient's last name", 
+        "postalcode": "The recipient's mailing postal code (zip code)", 
+        "recipientid": "A unique ID for this recipient across lists", 
+        "stateprovince": "The recipient's mailing state or province"
+    }, 
+    "criteria": [
+        {
+            "criterionid": "delivery", 
+            "defaultvalue": "Ongoing", 
+            "description": "", 
+            "editable": true, 
+            "helptext": "", 
+            "hidden": false, 
+            "options": [
+                {
+                    "criteria": [
+                        {
+                            "type": "info",
+                            "criterionid": "info", 
+                            "title": "Will mail to customers who visited 90-96 days before the mail date."
+                        }
+                    ], 
+                    "title": "Ongoing", 
+                    "value": "ongoing"
+                }, 
+                {
+                    "criteria": [
+                        {
+                            "criterionid": "last_visit_range", 
+                            "defaultmaxlabel": "365", 
+                            "defaultminlabel": "90", 
+                            "defaultvalue": null, 
+                            "description": "", 
+                            "editable": true, 
+                            "helptext": "", 
+                            "hidden": false, 
+                            "integer": true, 
+                            "max": 365, 
+                            "min": 90, 
+                            "required": false, 
+                            "title": "Mail to customers who got a haircut", 
+                            "type": "numberrange", 
+                            "unit": "days before the mail date"
+                        }
+                    ], 
+                    "title": "One Time", 
+                    "value": "onetime"
+                }
+            ], 
+            "required": false, 
+            "title": "Campaign Delivery", 
+            "type": "nestedsingle"
+        }, 
+        {
+            "criterionid": "1yr_visit_count", 
+            "defaultmaxlabel": "No Limit", 
+            "defaultminlabel": "1", 
+            "defaultvalue": null, 
+            "description": "", 
+            "editable": true, 
+            "helptext": "", 
+            "hidden": false, 
+            "integer": true, 
+            "max": 99999, 
+            "min": 1, 
+            "required": false, 
+            "title": "Mail to customers who visited", 
+            "type": "numberrange", 
+            "unit": "times in the year before the mail date"
+        }, 
+        {
+            "criterionid": "zipcodes", 
+            "defaultvalue": null, 
+            "description": "", 
+            "editable": true, 
+            "helptext": "Enter zip codes separated by commas", 
+            "hidden": false, 
+            "maxchars": 200, 
+            "required": false, 
+            "title": "Mail to Customers in Specific Zip Codes", 
+            "type": "text"
+        }
+    ], 
+    "criteriaid": "1", 
+    "description": "Target customers who have not visited for 90+ days.  This campaign can run once or it can be configured to run weekly.", 
+    "title": "Direct Mail - Lapsed"
+}
