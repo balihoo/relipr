@@ -152,7 +152,7 @@ class DB {
 			if(!$hasHeaders) {
 				// Remapping the headers to have _ so that we can test header mapping
 				if($list->listid == 0)
-					fputcsv($fp, array_map(function($header){return "_$header";}, array_keys($row)));
+					fputcsv($fp, array_map(function($header){return strtoupper($header);}, array_keys($row)));
 				else
 					fputcsv($fp, array_keys($row));
 				$hasHeaders = true;
