@@ -150,7 +150,11 @@ class DB {
 		$hasHeaders = false;
 		while($row = $result->fetchArray(SQLITE3_ASSOC)) {
 			if(!$hasHeaders) {
-				fputcsv($fp, array_keys($row));
+				// Remapping the headers to have _ so that we can test header mapping
+				if($list->listid == 0)
+					fputcsv($fp, array_map(function($header){return "_$header";}, array_keys($row)));
+				else
+					fputcsv($fp, array_keys($row));
 				$hasHeaders = true;
 			}
 			fputcsv($fp, array_values($row));
