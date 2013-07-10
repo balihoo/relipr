@@ -97,7 +97,7 @@ A _list_ contains all of the information about a campaign that will enable the L
  - `criteriaid`: Tells the list provider which criteria specification to use (provided in the URL along with medium & brand).
  - `columns`: Indicates which data columns this campaign will use. The List Provider will use this when constructing the final downloaded list and should only return the specified columns. As in SQL, `*` means all columns.
  - `filter`: The filter indicates to the list provider which criteria selections were made by the affiliate. This is a JSON object where the keys represent `criterionid`s and the values represent the user selected values.
- - `orderinfo`: Information about the order including `OrderID`, `StartDate` and other pertinent information will be passed in this JSON object (key/value pairs)
+ - `orderinfo`: Information about the order including `OrderID`, `DeliveryDate` and other pertinent information will be passed in this JSON object (key/value pairs)
  - `affiliateinfo`: Similar to `orderinfo` this represents data known by Balihoo that are specific to the affiliate that is using this requested list in their marketing order.
  - `creativeinfo`: Another JSON object that represents all of the field and layer selections that the affiliate made while customizing the creative that is going to be used in this campaign.
  - `requestedcount`: This field indicates the _maximum_ number of recipients that the affiliate wishes to target for this campaign. If the list query results in more recipients that `requestedcount` then the list provider uses an algorithm to reduce the total list size to this requested size.
@@ -146,7 +146,7 @@ A _list_ contains all of the information about a campaign that will enable the L
 	<textarea name="orderinfo" cols="40" rows="10">{
 	"OrderID":10,
 	"AffiliateNumber":"75",
-	"StartDate":"2016-12-25",
+	"DeliveryDate":"2016-12-25",
 	"IsAffiliateInitiated":false
 }</textarea><br/><br/>
 
