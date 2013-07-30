@@ -24,6 +24,7 @@ class ListDTO
 		$links;
 
 	private $canceled, $cancelnotified, $counted, $countnotified, $readied, $readynotified;
+	private $baseuri;
 
 	// Set attribute defaults
 	public function __construct() {
@@ -59,6 +60,14 @@ class ListDTO
 			$list->readynotified = $arr['readynotified'];
 		}
 
+		if(array_key_exists('baseuri', $arr))
+			$list->baseuri = $arr['baseuri'];
+		else {
+			// Obviously this won't work for https or for sites hosted on a non-root path
+			//  but this is just an example
+			$list->baseuri = "http://$_SERVER[HTTP_HOST]/medium/{$list->medium}/brand/{$list->brandkey}/criteria/{$list->criteriaid}/list";
+		}
+
 		return $list;
 	}
 
@@ -68,28 +77,21 @@ class ListDTO
 	public function getCountNotified() { return $this->countnotified; }
 	public function getReadied() { return $this->readied; }
 	public function getReadyNotified() { return $this->readynotified; }
-
-
-	private function getBaseUri() {
-		// Obviously this won't work for https or for sites hosted on a non-root path
-		//  but this is just an example
-		return "http://$_SERVER[HTTP_HOST]/medium/{$this->medium}/brand/{$this->brandkey}/criteria/{$this->criteriaid}/list/{$this->listid}";
-	}
+	public function getBaseuri() { return $this->baseuri; }
 
 	public function updateLinks() {
 		$this->links = array();
-		$base = $this->getBaseUri();
 
 		// Add the self link to every list
-		$this->links['self'] = "$base";
+		$this->links['self'] = "{$this->baseuri}/{$this->listid}";
 
 		// Add state specific links
 		switch($this->status) {
 			case ListDTO::STATUS_SUBMITTED:
-				$this->links['cancel'] = "$base/cancel";
+				$this->links['cancel'] = "{$this->baseuri}/{$this->listid}/cancel";
 				break;
 			case ListDTO::STATUS_LISTREADY:
-				$this->links['download'] = "$base/download";
+				$this->links['download'] = "{$this->baseuri}/{$this->listid}/download";
 				break;
 		}
 	}

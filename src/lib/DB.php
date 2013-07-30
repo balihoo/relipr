@@ -191,10 +191,10 @@ class DB {
 			$stmt = $this->db->prepare("
 			insert into list(
 				medium, brandkey, criteriaid, filter, orderinfo, affiliateinfo, creativeinfo, requestedcount,
-				count, status, columns, callback, cost, inserted, cancelnotified, readied)
+				count, status, columns, callback, cost, inserted, cancelnotified, readied, baseuri)
 			values(
 				:medium, :brandkey, :criteriaid, :filter, :orderinfo, :affiliateinfo, :creativeinfo, :requestedcount,
-				:count, :status, :columns, :callback, :cost, datetime(), null, null);
+				:count, :status, :columns, :callback, :cost, datetime(), null, null, :baseuri);
 			");
 		} else {
 			$sql = 'update list set ';
@@ -213,7 +213,8 @@ class DB {
 				count = :count,
 				status = :status,
 				columns = :columns,
-				cost = :cost
+				cost = :cost,
+				baseuri = :baseuri
 			where listid = :listid;';
 			// Prepare the update statement
 			$stmt = $this->db->prepare($sql);
@@ -234,6 +235,7 @@ class DB {
 		$stmt->bindValue(':columns', ListDTO::encodeColumns($list->columns), SQLITE3_TEXT);
 		$stmt->bindValue(':callback', $list->callback, SQLITE3_TEXT);
 		$stmt->bindValue(':cost', $list->cost, SQLITE3_FLOAT);
+		$stmt->bindValue(':baseuri', $list->getBaseuri(), SQLITE3_TEXT);
 		try {
 			$stmt->execute();
 		} catch (Exception $ex) {

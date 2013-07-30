@@ -121,6 +121,7 @@ create table list(
 	cost float null,
 	status varchar(10) not null,
 	callback varchar(255) null,
+	baseuri varchar(500) null,
 	inserted datetime not null,
 	submitted datetime null,
 	canceled datetime null,
