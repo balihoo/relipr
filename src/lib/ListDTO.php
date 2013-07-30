@@ -49,7 +49,6 @@ class ListDTO
 		$list->setOrderInfo($arr['orderinfo']);
 		$list->setAffiliateInfo($arr['affiliateinfo']);
 		$list->setColumns($arr['columns']);
-		$list->updateLinks();
 
 		if($complete) {
 			$list->canceled = $arr['canceled'];
@@ -67,6 +66,7 @@ class ListDTO
 			//  but this is just an example
 			$list->baseuri = "http://$_SERVER[HTTP_HOST]/medium/{$list->medium}/brand/{$list->brandkey}/criteria/{$list->criteriaid}/list";
 		}
+		$list->updateLinks();
 
 		return $list;
 	}
