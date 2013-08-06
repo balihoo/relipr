@@ -48,7 +48,14 @@ class CriteriaBuilder
 		// Use a naming convention to find the criteria class file
 		$classPath = self::getBasePath($medium, $brandkey) . "/$criteriaid.php";
 		if(!file_exists($classPath)) // Make sure the file actually exists
-			throw new NotFoundException("Unable to find criteria '$criteriaid' for brand '$brandkey' and medium '$medium'");
+		{
+			if($criteriaid != 'test') {
+				// For testing sake, we'll accpet any old criteriaid and just render test.php
+				return self::getCriteriaObject($medium, $brandkey, 'test', $affiliatenumber);
+			} else {
+				throw new NotFoundException("Unable to find criteria '$criteriaid' for brand '$brandkey' and medium '$medium'");
+			}
+		}
 		// Load the file's source
 		require_once($classPath);
 		// Figure out the class name based on this pattern
