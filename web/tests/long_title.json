@@ -1,0 +1,58 @@
+{
+    "columns": {
+        "address1": "The recipient's mailing address (line 1)", 
+        "address2": "The recipient's mailing address (line 2)", 
+        "city": "The recipient's mailing city", 
+        "country": "The recipient's mailing country.", 
+        "couponbarcodes": "A list of barcodes for each coupon", 
+        "couponexpirations": "A list of expiration dates for each coupon", 
+        "firstname": "The recipient's first name", 
+        "lastname": "The recipient's last name", 
+        "postalcode": "The recipient's mailing postal code (zip code)", 
+        "recipientid": "A unique ID for this recipient across lists", 
+        "stateprovince": "The recipient's mailing state or province"
+    }, 
+    "criteria": [
+        {
+            "criterionid": "first_info", 
+            "title": "This is a mailing to NON Customers. Bluewater will rent the mailing list for you taking into account distance from your salon and customer penetration. The \"best\" routes will be selected up to your maximum desired mail quantity. If you wish to target a specific neighborhood, you can do so by entering street boundaries to specify your target area.  Current customers are suppressed from the mailing list to the best of our ability.", 
+            "type": "info"
+        }, 
+        {
+            "criterionid": "is_control", 
+            "defaultvalue": "No", 
+            "description": null, 
+            "options": [
+                {
+                    "criteria": [], 
+                    "title": "No", 
+                    "value": "is_control_no"
+                }, 
+                {
+                    "criteria": [
+                        {
+                            "criterionid": "control_description", 
+                            "defaultvalue": null, 
+                            "description": "", 
+                            "editable": true, 
+                            "helptext": "This control description will be passed to Great Clips on the promo header/detail feed.", 
+                            "hidden": false, 
+                            "maxchars": 200, 
+                            "required": false, 
+                            "title": "Control Group Description (optional)", 
+                            "type": "text"
+                        }
+                    ], 
+                    "title": "Yes", 
+                    "value": "is_control_yes"
+                }
+            ], 
+            "title": "Control Group?", 
+            "type": "nestedsingle"
+        }
+    ], 
+    "criteriaid": "9", 
+    "description": "This is a mailing to NON Customers. Bluewater will rent the mailing list for you taking into account distance from your salon and customer penetration. The \"best\" routes will be selected up to your maximum desired mail quantity. If you wish to target a specific neighborhood, you can do so by entering street boundaries to specify your target area. Current customers are suppressed from the mailing list to the best of our ability.", 
+    "title": "Direct Mail - Grand Opening"
+}
+
