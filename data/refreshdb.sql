@@ -107,7 +107,7 @@ select 'Created status table';
 
 -- Create the list table
 create table list(
-	listid integer primary key autoincrement not null,
+	listid char(13) primary key not null,
 	brandkey varchar(10) not null,
 	criteriaid varchar(20) not null,
 	medium varchar(20) not null,
@@ -134,6 +134,15 @@ create table list(
 	foreign key(status) references status(status)
 );
 select 'Created list table';
+
+create table result(
+	recipientid integer not null,
+	type varchar(20) not null,
+	timestamp datetime not null,
+	detail varchar(200) not null default '',
+	primary key(recipientid, type, timestamp)
+);
+select 'Created result table';
 
 select 'Refresh complete';
 

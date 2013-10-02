@@ -121,7 +121,7 @@ A _list_ contains all of the information about a campaign that will enable the L
 			if(/list\/[0-9]+/.test(node[propName])) {
 				text = node[propName] + "";
 				console.log(tagName + "" + text);
-				node[propName] = text.replace(/list\/[0-9]+/, 'list/' + listid);
+				node[propName] = text.replace(/list\/([0-9A-Fa-f\-]+)/, 'list/' + listid);
 			}
 		}
 	}

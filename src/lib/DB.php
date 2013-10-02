@@ -3,6 +3,7 @@
 /* This class provides access to the sqlite database */
 
 require_once 'ListDTO.php';
+require_once 'ResultDTO.php';
 
 use Tonic\Response,
 		Tonic\UnauthorizedException,
@@ -92,7 +93,7 @@ class DB {
 		$sql = "select * from list where medium = '" . $this->db->escapestring($medium) . "' " .
 			" and brandkey = '" . $this->db->escapestring($brandkey) . "' " .
 			" and criteriaid = '" . $this->db->escapestring($criteriaid) . "' " .
-			" and listid = $listid;";
+			" and listid = '" . $this->db->escapestring($listid) . "';";
 		$list = $this->db->query($sql)->fetchArray(SQLITE3_ASSOC);
 		if($list === FALSE)
 			throw new NotFoundException("List not found");
@@ -190,12 +191,13 @@ class DB {
 			// Prepare the insert statement
 			$stmt = $this->db->prepare("
 			insert into list(
-				medium, brandkey, criteriaid, filter, orderinfo, affiliateinfo, creativeinfo, requestedcount,
+				listid, medium, brandkey, criteriaid, filter, orderinfo, affiliateinfo, creativeinfo, requestedcount,
 				count, status, columns, callback, cost, inserted, cancelnotified, readied, baseuri)
 			values(
-				:medium, :brandkey, :criteriaid, :filter, :orderinfo, :affiliateinfo, :creativeinfo, :requestedcount,
+				:listid, :medium, :brandkey, :criteriaid, :filter, :orderinfo, :affiliateinfo, :creativeinfo, :requestedcount,
 				:count, :status, :columns, :callback, :cost, datetime(), null, null, :baseuri);
 			");
+			$list->listid = uniqid();
 		} else {
 			$sql = 'update list set ';
 			if($updates) {
@@ -218,10 +220,10 @@ class DB {
 			where listid = :listid;';
 			// Prepare the update statement
 			$stmt = $this->db->prepare($sql);
-			$stmt->bindValue(':listid', $list->listid, SQLITE3_INTEGER);
 		}
 
 		// Bind the values to their columns
+		$stmt->bindValue(':listid', $list->listid, SQLITE3_TEXT);
 		$stmt->bindValue(':medium', $list->medium, SQLITE3_TEXT);
 		$stmt->bindValue(':brandkey', $list->brandkey, SQLITE3_TEXT);
 		$stmt->bindValue(':criteriaid', $list->criteriaid, SQLITE3_TEXT);
@@ -243,9 +245,6 @@ class DB {
 			throw $ex;
 		}
 
-		// Set the list id if this was an insert
-		if($list->listid === null)
-			$list->listid = $this->db->lastInsertRowID();
 		$list->updateLinks();
 	}
 
@@ -276,6 +275,36 @@ SQL;
 			$lists[] = ListDTO::fromArray($data);
 		return $lists;
 	}
+
+	public function getResults($limit) {
+		$sql = "select * from result order by timestamp desc limit $limit;";
+		$result = $this->db->query($sql);
+		$results = array();
+		while($data = $result->fetchArray())
+			$results[] = $data;
+		return $results;
+	}
+
+	public function saveResult(ResultDTO $result) {
+		$sql = 'insert or ignore into result(recipientid, type, timestamp, detail) values' .
+			'(:recipientid, :type, :timestamp, :detail)';
+		$stmt = $this->db->prepare($sql);
+
+		// Bind the values to their columns
+		$stmt->bindValue(':recipientid', $result->recipientid, SQLITE3_INTEGER);
+		$stmt->bindValue(':type', $result->type, SQLITE3_TEXT);
+		$stmt->bindValue(':timestamp', $result->timestamp, SQLITE3_INTEGER);
+		$stmt->bindValue(':detail', $result->detail, SQLITE3_TEXT);
+
+		try {
+			$stmt->execute();
+		} catch (Exception $ex) {
+			error_log ("Error saving result" . json_encode($result));
+			throw $ex;
+		}
+
+	}
+
 
 	// Refresh the database back to the baseline
 	public function refreshDatabase() {

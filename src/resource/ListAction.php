@@ -112,8 +112,9 @@ class ListAction extends BasicResource{
 
 		// Validate each of the results and pretend to do something with them
 		$processed = 0;
-		foreach($results as $result) {
-			ResultDTO::fromArray($result);
+		foreach($results as $resultArr) {
+			$result = ResultDTO::fromArray($resultArr);
+			$this->db->saveResult($result);
 			$processed++;
 		}
 
